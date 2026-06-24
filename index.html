@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"><!-- v2026-06-24 17:39 UTC -->
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>IGFE — Gestión Financiera del Estado</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -598,20 +598,6 @@ function render(year, q) {
       '<div class="bar-t"><div class="bar-f" style="width:' + p + '%;background:' + c + '"></div></div></div>'
     ).join('') : '<div style="color:#aaa;font-size:11px">Sin datos disponibles</div>';
 
-  // Circles
-  const gs = d.gastoSector || {};
-  const circDef = [
-    {n:'CODELCO', v:gs['Empresas del Estado']||'—', bg:'#c8d4e8', co:'#1a2744', sz:95},
-    {n:'IES Estado', v:'$1,4B', bg:'#dce4f0', co:'#1a2744', sz:75},
-    {n:'Sector P\u00fablico', v:(gs['Sector P\u00fablico']?'$'+gs['Sector P\u00fablico']+'B':'—'), bg:'#1a2744', co:'#fff', sz:145, vc:'#00b4a0'},
-    {n:'Otras Emp.', v:(gs['Empresas del Estado']?'$'+gs['Empresas del Estado']+'B':'—'), bg:'#e8336e', co:'#fff', sz:95},
-    {n:'Sec. Municipal', v:(gs['Sector Municipal']?'$'+gs['Sector Municipal']+'B':'—'), bg:'#00b4a0', co:'#fff', sz:95},
-  ];
-  document.getElementById('circles').innerHTML = circDef.map(c =>
-    '<div class="circ" style="width:' + c.sz + 'px;height:' + c.sz + 'px;background:' + c.bg + ';color:' + c.co + '">' +
-    '<div class="circ-n" style="font-size:' + (c.sz<80?'7':'8') + 'px">' + c.n + '</div>' +
-    '<div class="circ-v" style="font-size:' + (c.sz>130?'15':'12') + 'px;color:' + (c.vc||c.co) + '">' + c.v + '</div></div>'
-  ).join('');
 
   // Circles SVG diagram — PDF style with transfer arrows
   document.getElementById('circ-subtitle').textContent = 'Transferencias entre Sectores ' + year;
