@@ -714,6 +714,7 @@ function render(year, q) {
 
 
   // Chart: Gastos sector
+  var prev = getPrev(year, qi);
   const prd = prev ? DB[prev] : null;
   const secL = ['Sec.P\u00fablico','Sec.Municipal','Empresas','Educ.Sup.'];
   const secK = ['Sector P\u00fablico','Sector Municipal','Empresas del Estado','Instituciones de Educaci\u00f3n Superior'];
