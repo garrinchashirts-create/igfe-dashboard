@@ -1025,9 +1025,9 @@ function render(year, q) {
   if (d.munIng) {
     const dsMI = [];
     var mIngTotal = d.munIng.reduce(function(a,b){return a+(b||0);},0);
-    if (prd && prd.munIng) { var pMIT=prd.munIng.reduce(function(a,b){return a+(b||0);},0); dsMI.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pMIT/1000).toFixed(0)+'MM', prd.munIng, 'rgba(46,95,163,.35)', C1)); }
-    dsMI.push(ds(shortPer+'  $'+(mIngTotal/1000).toFixed(0)+'MM', d.munIng, 'rgba(0,180,160,.65)', C2));
-    bar('c-ming', miL, dsMI, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: v => '$'+(v/1000).toFixed(0)+'MM', rot:40});
+    if (prd && prd.munIng) { var pMIT=prd.munIng.reduce(function(a,b){return a+(b||0);},0); dsMI.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pMIT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', prd.munIng, 'rgba(46,95,163,.35)', C1)); }
+    dsMI.push(ds(shortPer+'  $'+(mIngTotal/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', d.munIng, 'rgba(0,180,160,.65)', C2));
+    bar('c-ming', miL, dsMI, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM';}, rot:40});
   }
 
   // Municipal Gastos
@@ -1035,9 +1035,9 @@ function render(year, q) {
   if (d.munGas) {
     const dsMG = [];
     var mGasTotal = d.munGas.reduce(function(a,b){return a+(b||0);},0);
-    if (prd && prd.munGas) { var pMGT=prd.munGas.reduce(function(a,b){return a+(b||0);},0); dsMG.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pMGT/1000).toFixed(0)+'MM', prd.munGas, 'rgba(46,95,163,.35)', C1)); }
-    dsMG.push(ds(shortPer+'  $'+(mGasTotal/1000).toFixed(0)+'MM', d.munGas, 'rgba(0,180,160,.65)', C2));
-    bar('c-mgas', mgL, dsMG, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: v => '$'+(v/1000).toFixed(0)+'MM', rot:40});
+    if (prd && prd.munGas) { var pMGT=prd.munGas.reduce(function(a,b){return a+(b||0);},0); dsMG.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pMGT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', prd.munGas, 'rgba(46,95,163,.35)', C1)); }
+    dsMG.push(ds(shortPer+'  $'+(mGasTotal/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', d.munGas, 'rgba(0,180,160,.65)', C2));
+    bar('c-mgas', mgL, dsMG, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM';}, rot:40});
   }
 
   // FCM
@@ -1060,9 +1060,9 @@ function render(year, q) {
     const empBC = d.empresas.map(v => v >= 0 ? C2 : CP);
     const dsEmp = [];
     var empTotal = d.empresas.reduce(function(a,b){return a+(b||0);},0);
-    if (prd && prd.empresas) { var pET=prd.empresas.reduce(function(a,b){return a+(b||0);},0); dsEmp.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+Math.round(pET)+'MM', prd.empresas, 'rgba(46,95,163,.35)', C1)); }
+    if (prd && prd.empresas) { var pET=prd.empresas.reduce(function(a,b){return a+(b||0);},0); dsEmp.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+Math.round(Math.abs(pET)).toLocaleString('es-CL')+'MM', prd.empresas, 'rgba(46,95,163,.35)', C1)); }
     dsEmp.push({label:shortPer+'  $'+Math.round(empTotal)+'MM', data:d.empresas, backgroundColor:empBG, borderColor:empBC, borderWidth:1});
-    bar('c-emp', empL, dsEmp, {fmt: v => '$'+v+'MM', ytick: v => '$'+v+'MM', rot:40, xs:9});
+    bar('c-emp', empL, dsEmp, {fmt: v => '$'+v+'MM', ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL')+'MM';}, rot:40, xs:9});
   }
 
   // Educación
@@ -1070,9 +1070,9 @@ function render(year, q) {
   if (d.eduIng) {
     const dsEdu = [];
     var eduIngT = d.eduIng.reduce(function(a,b){return a+(b||0);},0);
-    if (prd && prd.eduIng) { var pEIT=prd.eduIng.reduce(function(a,b){return a+(b||0);},0); dsEdu.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+Math.round(pEIT)+'MM', prd.eduIng, 'rgba(46,95,163,.35)', C1)); }
-    dsEdu.push(ds(shortPer+'  $'+Math.round(eduIngT)+'MM', d.eduIng, 'rgba(0,180,160,.65)', C2));
-    bar('c-edu', eduL, dsEdu, {fmt: v => '$'+v+'MM', ytick: v => '$'+v+'MM', rot:35});
+    if (prd && prd.eduIng) { var pEIT=prd.eduIng.reduce(function(a,b){return a+(b||0);},0); dsEdu.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+Math.round(pEIT).toLocaleString('es-CL')+'MM', prd.eduIng, 'rgba(46,95,163,.35)', C1)); }
+    dsEdu.push(ds(shortPer+'  $'+Math.round(eduIngT).toLocaleString('es-CL')+'MM', d.eduIng, 'rgba(0,180,160,.65)', C2));
+    bar('c-edu', eduL, dsEdu, {fmt: v => '$'+v+'MM', ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL')+'MM';}, rot:35});
   }
 
   // Gastos IES chart
@@ -1080,9 +1080,9 @@ function render(year, q) {
   if (d.eduGas) {
     var dsEdug = [];
     var eduGasT = d.eduGas.reduce(function(a,b){return a+(b||0);},0);
-    if (prd && prd.eduGas) { var pEGT=prd.eduGas.reduce(function(a,b){return a+(b||0);},0); dsEdug.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+Math.round(pEGT)+'MM', prd.eduGas, 'rgba(46,95,163,.35)', C1)); }
-    dsEdug.push(ds(shortPer+'  $'+Math.round(eduGasT)+'MM', d.eduGas, 'rgba(0,180,160,.65)', C2));
-    bar('c-edug', gasIES_L, dsEdug, {fmt: v => '$'+v+'MM', ytick: v => '$'+v+'MM', rot:35});
+    if (prd && prd.eduGas) { var pEGT=prd.eduGas.reduce(function(a,b){return a+(b||0);},0); dsEdug.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+Math.round(pEGT).toLocaleString('es-CL')+'MM', prd.eduGas, 'rgba(46,95,163,.35)', C1)); }
+    dsEdug.push(ds(shortPer+'  $'+Math.round(eduGasT).toLocaleString('es-CL')+'MM', d.eduGas, 'rgba(0,180,160,.65)', C2));
+    bar('c-edug', gasIES_L, dsEdug, {fmt: v => '$'+v+'MM', ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL')+'MM';}, rot:35});
   }
 
   // Gratuidad — ALL periods
@@ -1152,18 +1152,18 @@ function render(year, q) {
   if (d.gobIng) {
     const dsGI = [];
     var gobIngT = d.gobIng.reduce(function(a,b){return a+(b||0);},0);
-    if (prd && prd.gobIng) { var pGIT=prd.gobIng.reduce(function(a,b){return a+(b||0);},0); dsGI.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pGIT/1000).toFixed(0)+'MM', prd.gobIng, 'rgba(46,95,163,.35)', C1)); }
-    dsGI.push(ds(shortPer+'  $'+(gobIngT/1000).toFixed(0)+'MM', d.gobIng, 'rgba(0,180,160,.65)', C2));
-    bar('c-ging', gIngL, dsGI, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: v => '$'+(v/1000).toFixed(0)+'MM'});
+    if (prd && prd.gobIng) { var pGIT=prd.gobIng.reduce(function(a,b){return a+(b||0);},0); dsGI.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pGIT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', prd.gobIng, 'rgba(46,95,163,.35)', C1)); }
+    dsGI.push(ds(shortPer+'  $'+(gobIngT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', d.gobIng, 'rgba(0,180,160,.65)', C2));
+    bar('c-ging', gIngL, dsGI, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM';}});
   }
 
   const gGasL = ['Ini.Inversion','Transf.Cap.','Adq.Act.','Personal','Transf.Corr.','Serv.Deuda','Otros'];
   if (d.gobGas) {
     const dsGG = [];
     var gobGasT = d.gobGas.reduce(function(a,b){return a+(b||0);},0);
-    if (prd && prd.gobGas) { var pGGT=prd.gobGas.reduce(function(a,b){return a+(b||0);},0); dsGG.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pGGT/1000).toFixed(0)+'MM', prd.gobGas, 'rgba(46,95,163,.35)', C1)); }
-    dsGG.push(ds(shortPer+'  $'+(gobGasT/1000).toFixed(0)+'MM', d.gobGas, 'rgba(0,180,160,.65)', C2));
-    bar('c-ggas', gGasL, dsGG, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: v => '$'+(v/1000).toFixed(0)+'MM', rot:40});
+    if (prd && prd.gobGas) { var pGGT=prd.gobGas.reduce(function(a,b){return a+(b||0);},0); dsGG.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pGGT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', prd.gobGas, 'rgba(46,95,163,.35)', C1)); }
+    dsGG.push(ds(shortPer+'  $'+(gobGasT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', d.gobGas, 'rgba(0,180,160,.65)', C2));
+    bar('c-ggas', gGasL, dsGG, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM';}, rot:40});
   }
 }
 
