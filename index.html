@@ -31,6 +31,9 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .period-badge{background:var(--teal);color:var(--dark);padding:6px 16px;border-radius:7px;font-size:13px;font-weight:800;letter-spacing:.3px}
 .upd-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;padding:7px 14px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
 .upd-btn:hover{background:rgba(255,255,255,.2)}
+.narr{background:var(--light);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;padding:.6rem .9rem;margin-bottom:8px;font-size:11px;color:#444;line-height:1.6;display:none}
+.narr.show{display:block}
+.narr strong{color:var(--navy);font-size:10px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px}
 /* Period banner with selectors */
 .period-banner{background:var(--navy);border-bottom:3px solid var(--teal);padding:.65rem 1.5rem}
 .period-banner-in{max-width:1300px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -269,12 +272,14 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
       <div class="card">
         <div class="ct">Ingresos Presupuestarios Ejecutados — Sector Público</div>
         <div class="cs">Billones de pesos · comparativo año anterior</div>
-        <div class="cw"><canvas id="c-isp"></canvas></div>
+        <div class="cw"><canvas id="c-isp"></canvas>
+      <div class="narr" id="narr-isp"><strong>Análisis</strong><span id="narr-isp-txt"></span></div></div>
       </div>
       <div class="card">
         <div class="ct">Gastos Presupuestarios Ejecutados — Sector Público</div>
         <div class="cs">Billones de pesos · comparativo año anterior</div>
-        <div class="cw"><canvas id="c-gsp"></canvas></div>
+        <div class="cw"><canvas id="c-gsp"></canvas>
+      <div class="narr" id="narr-gsp"><strong>Análisis</strong><span id="narr-gsp-txt"></span></div></div>
       </div>
     </div>
     <div class="g2">
@@ -299,12 +304,14 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
         <div class="ct">Evolución de la Deuda Pública / PIB</div>
         <div class="cs">Porcentaje del PIB</div>
         <div class="debt-g" id="debt-g"></div>
-        <div class="cw" style="height:180px"><canvas id="c-deuda"></canvas></div>
+        <div class="cw" style="height:180px"><canvas id="c-deuda"></canvas>
+      <div class="narr" id="narr-deuda"><strong>Análisis</strong><span id="narr-deuda-txt"></span></div></div>
       </div>
       <div class="card">
         <div class="ct">Evolución de las Inversiones Financieras / PIB</div>
         <div class="cs">Porcentaje del PIB</div>
-        <div class="cw"><canvas id="c-inv"></canvas></div>
+        <div class="cw"><canvas id="c-inv"></canvas>
+      <div class="narr" id="narr-inv"><strong>Análisis</strong><span id="narr-inv-txt"></span></div></div>
       </div>
     </div>
   </div>
@@ -316,12 +323,14 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
       <div class="card">
         <div class="ct">Ingresos Presupuestarios — Gobiernos Regionales</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-ging"></canvas></div>
+        <div class="cw"><canvas id="c-ging"></canvas>
+      <div class="narr" id="narr-gores_ing"><strong>Análisis</strong><span id="narr-gores_ing-txt"></span></div></div>
       </div>
       <div class="card">
         <div class="ct">Gastos Presupuestarios — Gobiernos Regionales</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-ggas"></canvas></div>
+        <div class="cw"><canvas id="c-ggas"></canvas>
+      <div class="narr" id="narr-gores_gas"><strong>Análisis</strong><span id="narr-gores_gas-txt"></span></div></div>
       </div>
     </div>
   </div>
@@ -333,12 +342,14 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
       <div class="card">
         <div class="ct">Ingresos Presupuestarios — Sector Municipal</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-ming"></canvas></div>
+        <div class="cw"><canvas id="c-ming"></canvas>
+      <div class="narr" id="narr-mun_ing"><strong>Análisis</strong><span id="narr-mun_ing-txt"></span></div></div>
       </div>
       <div class="card">
         <div class="ct">Gastos Presupuestarios — Sector Municipal</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-mgas"></canvas></div>
+        <div class="cw"><canvas id="c-mgas"></canvas>
+      <div class="narr" id="narr-mun_gas"><strong>Análisis</strong><span id="narr-mun_gas-txt"></span></div></div>
       </div>
     </div>
     <div class="card">
@@ -355,24 +366,28 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
       <div class="card">
         <div class="ct">Utilidades / Pérdidas — Empresas del Estado</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw" style="height:240px"><canvas id="c-emp"></canvas></div>
+        <div class="cw" style="height:240px"><canvas id="c-emp"></canvas>
+      <div class="narr" id="narr-emp"><strong>Análisis</strong><span id="narr-emp-txt"></span></div></div>
       </div>
       <div class="card">
         <div class="ct">Ingresos — Instituciones Educación Superior</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-edu"></canvas></div>
+        <div class="cw"><canvas id="c-edu"></canvas>
+      <div class="narr" id="narr-edu_ing"><strong>Análisis</strong><span id="narr-edu_ing-txt"></span></div></div>
       </div>
     </div>
     <div class="g2">
       <div class="card">
         <div class="ct">Gastos — Instituciones Educación Superior</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-edug"></canvas></div>
+        <div class="cw"><canvas id="c-edug"></canvas>
+      <div class="narr" id="narr-edu_gas"><strong>Análisis</strong><span id="narr-edu_gas-txt"></span></div></div>
       </div>
       <div class="card">
         <div class="ct">Transferencias MINEDUC a Educación Superior · % Gratuidad</div>
         <div class="cs">Billones de pesos y porcentaje destinado a gratuidad</div>
-        <div class="cw"><canvas id="c-grat"></canvas></div>
+        <div class="cw"><canvas id="c-grat"></canvas>
+      <div class="narr" id="narr-grat"><strong>Análisis</strong><span id="narr-grat-txt"></span></div></div>
       </div>
     </div>
   </div>
@@ -449,6 +464,8 @@ const DB = {"2023-4":{"year":2023,"quarter":4,"cumplimiento":{"Sector Municipal"
 const TR = {"2023-4":{"codelco":18.5,"codelcoToSP":3.5,"spToCodelco":1.7,"sp":95.7,"otras":24.4,"spToOtras":1.1,"otrasToSP":4.3,"municipal":12.4,"spToMun":5.5,"munToSP":0.9,"zofri":6.2,"ies":1.7,"spToIES":0.7},"2024-3":{"codelco":15.0,"codelcoToSP":2.8,"spToCodelco":1.7,"sp":78.0,"otras":14.8,"spToOtras":0.5,"otrasToSP":2.8,"municipal":10.0,"spToMun":4.3,"munToSP":1.2,"zofri":6.6,"ies":0.8,"spToIES":0.4},"2024-4":{"codelco":22.6,"codelcoToSP":3.9,"spToCodelco":1.8,"sp":102.6,"otras":26.8,"spToOtras":0.9,"otrasToSP":3.3,"municipal":13.7,"spToMun":5.8,"munToSP":0.9,"zofri":6.6,"ies":1.8,"spToIES":0.9},"2025-1":{"codelco":6.7,"codelcoToSP":0.7,"spToCodelco":1.0,"sp":28.5,"otras":5.7,"spToOtras":0.1,"otrasToSP":0.9,"municipal":3.2,"spToMun":1.8,"munToSP":0.5,"zofri":5.3,"ies":0.3,"spToIES":0.1},"2025-2":{"codelco":14.6,"codelcoToSP":1.4,"spToCodelco":1.6,"sp":55.5,"otras":6.8,"spToOtras":0.1,"otrasToSP":1.0,"municipal":7.0,"spToMun":2.9,"munToSP":0.6,"zofri":6.5,"ies":0.5,"spToIES":0.1},"2025-3":{"codelco":null,"codelcoToSP":null,"spToCodelco":null,"sp":null,"otras":null,"spToOtras":null,"otrasToSP":2.0,"municipal":10.4,"spToMun":4.2,"munToSP":0.9,"zofri":6.5,"ies":1.4,"spToIES":0.3},"2026-1":{"codelco":8.6,"codelcoToSP":1.0,"spToCodelco":0.8,"sp":null,"otras":5.1,"spToOtras":0.1,"otrasToSP":1.0,"municipal":null,"spToMun":null,"munToSP":null,"zofri":6.0,"ies":null,"spToIES":null},"2025-4":{"codelco":24.0,"codelcoToSP":4.3,"spToCodelco":2.5,"sp":106.8,"otras":22.8,"spToOtras":0.7,"otrasToSP":4.2,"municipal":14.0,"spToMun":5.7,"munToSP":1.0,"zofri":6.5,"ies":2.0,"spToIES":0.7}};
 
 const FULL_NAMES = {"Sec.Público": "Sector Público", "Sec.Municipal": "Sector Municipal", "Empresas": "Empresas del Estado", "Educ.Sup.": "Instituciones de Educación Superior", "Endeudam.": "Endeudamiento", "Otros Corr.": "Otros Ingresos Corrientes", "Vta.Activos": "Venta de Activos Financieros", "Impos.Prev.": "Imposiciones Previsionales", "Recup.": "Recuperación de Otros Préstamos", "Transf.": "Transferencias", "Serv.Deuda": "Servicio de la Deuda", "Seg.Social": "Prestaciones de Seguridad Social", "Act.Fin.": "Adquisición de Activos Financieros", "Bs.Serv.": "Bienes y Servicios de Consumo", "Inversion": "Iniciativas de Inversión", "Ing.Propios": "Ingresos Propios", "MINSAL": "Transferencias MINSAL", "FCM": "Fondo Común Municipal", "MINEDUC": "Transferencias MINEDUC", "Ing.Bfo FCM": "Ingresos Beneficio FCM", "Transf.Corr.": "Transferencias Corrientes", "Ini.Inv.": "Iniciativas de Inversión", "Prest.SS": "Prestaciones de Seguridad Social", "Act.NF": "Adquisición de Activos No Financieros", "Otras Emp.": "Otras Empresas del Estado e ITC", "Emp.Port.": "Empresas Portuarias", "Emp.Def.": "Empresas de Defensa", "Ing.Op.": "Ingresos de Operación", "Fin.Fiscal": "Financiamiento Fiscal", "Endeud.": "Endeudamiento", "Vta.": "Venta de Activos", "Bs. y Serv.": "Compra de Bienes y Servicios", "Inv. Real": "Inversión Real", "Comp.Pend.": "Compromisos Pendientes", "Inv.Fin.": "Inversión Financiera", "Transf.Capital": "Transferencias para Gastos de Capital", "Transf.Corrientes": "Transferencias Corrientes", "Ini.Inversion": "Iniciativas de Inversión", "Transf.Cap.": "Transferencias de Capital", "Adq.Act.": "Adquisición de Activos No Financieros"};
+
+const NARRATIVES = {"isp":{"2025-1":"Los principales incrementos respecto al a\u00f1o 2024 se explican por una mayor recaudaci\u00f3n tributaria, que aumenta en $4 billones, y un incremento en el endeudamiento por $3,7 billones. En contraste, la principal disminuci\u00f3n proviene de una menor venta de activos financieros, que cae en $0,8 billones.","2025-2":"Los principales incrementos respecto al a\u00f1o 2024 se explican por una mayor recaudaci\u00f3n tributaria, que aumenta en $2,2 billones, y un incremento en el endeudamiento por $0,8 billones. En contraste, la principal disminuci\u00f3n proviene de Venta de Activos Financieros que cae en $1,1 billones.","2025-3":"Los principales incrementos respecto al a\u00f1o 2024 se explican por una mayor recaudaci\u00f3n tributaria, que aumenta en $4,2 billones, y un incremento en las Imposiciones Previsionales por $0,4 billones. En contraste, la principal disminuci\u00f3n proviene del Endeudamiento que cae en $6,2 billones.","2025-4":"Al cierre del a\u00f1o 2025, los ingresos del sector p\u00fablico alcanzaron $115,6 billones, registrando un aumento de $1,6 billones (1,4%) respecto de 2024. Este resultado se explica principalmente por una mayor recaudaci\u00f3n tributaria, que crece en $4,9 billones, y un aumento en las Imposiciones Previsionales por $0,7 billones. En contraste, se observa una disminuci\u00f3n en el Endeudamiento por $2,6 billones."},"gsp":{"2025-1":"Los gastos totales crecieron de $22,2 billones en 2024 a $28,5 billones en 2025, con un aumento de $6,3 billones, equivalente a un 28,4%. El Servicio de la Deuda aument\u00f3 de $3,7 billones a $7,9 billones, registrando un crecimiento del 113,5%. Por otra parte, los Gastos en Personal subieron en $0,6 billones equivalente a un 15,8% en relaci\u00f3n al a\u00f1o anterior.","2025-2":"Al segundo trimestre de 2025, los gastos totales crecieron en $3,8 billones respecto al segundo trimestre de 2024. Los principales aumentos corresponden a Adquisici\u00f3n de Activos Financieros por $2 billones, seguido por Transferencias por $0,9 billones. La mayor disminuci\u00f3n corresponde al Servicio de la Deuda con una reducci\u00f3n de $1,4 billones.","2025-3":"Al tercer trimestre de 2025, los gastos totales crecieron en $1,3 billones respecto al tercer trimestre de 2024. Los principales aumentos corresponden a Transferencias por $1,8 billones, seguido por Prestaciones de Seguridad Social por $0,8 billones. La mayor disminuci\u00f3n corresponde al Servicio de la Deuda con una reducci\u00f3n de $3,2 billones.","2025-4":"Al cierre del a\u00f1o 2025, los gastos del sector p\u00fablico alcanzaron $106,8 billones, registrando un aumento de $4,2 billones (4,1%) respecto de 2024. El incremento se explica principalmente por mayores Gastos en Personal ($2,0 billones) y Transferencias ($1,5 billones). En contraste, destaca la disminuci\u00f3n en Servicio de la Deuda, que cay\u00f3 en $2,5 billones."},"gores_ing":{"2025-1":"Los ingresos por Transferencias para Gastos de Capital disminuyeron un 21,4%, representando la mayor fuente de ingresos con $373.450 millones. Las Transferencias Corrientes crecieron un 22,9%, alcanzando el monto de $37.328 millones.","2025-2":"Al segundo trimestre 2025 las Transferencias para Gastos de Capital aumentaron un 14%, representando la mayor fuente de ingresos con $866.761 millones. Las Transferencias Corrientes crecieron un 27,4%, alcanzando el monto de $79.760 millones.","2025-3":"Al tercer trimestre 2025 las Transferencias para Gastos de Capital aumentaron un 10,9%, representando la mayor fuente de ingresos con $1.167.858 millones. Las Transferencias Corrientes crecieron un 36,4%, alcanzando el monto de $124.810 millones.","2025-4":"Al cierre del a\u00f1o 2025, los ingresos de los Gobiernos Regionales alcanzaron $1.634.372 millones, registrando un aumento de $203.908 millones (14,3%) respecto de 2024. Las Transferencias para Gastos de Capital aumentan en $128.347 millones (10,1%). Las Transferencias Corrientes crecen en $45.282 millones (36,7%)."},"gores_gas":{"2025-1":"En 2025, aument\u00f3 el gasto respecto del a\u00f1o anterior, de $266.585 millones a $349.450 millones, lo que representa una variaci\u00f3n de un 31,1%. Destaca el fuerte incremento en Transferencias Corrientes 197,5%, Iniciativas de Inversi\u00f3n 38,4% y Adquisici\u00f3n de Activos No Financieros 55,1%. En contraste, se reduce el gasto en Servicio de la Deuda en un 50,7%.","2025-2":"En el segundo trimestre de 2025, los gastos totales de los Gobiernos Regionales alcanzaron los $750.096 millones, registrando un aumento del 30% respecto al mismo per\u00edodo de 2024. El crecimiento se explica por un aumento de 27,1% en las Iniciativas de Inversi\u00f3n, 175,3% en Transferencias Corrientes y un 30,4% en Transferencias de Capital.","2025-3":"En el tercer trimestre de 2025, los gastos totales de los Gobiernos Regionales alcanzaron los $1.125.263 millones, registrando un aumento del 27,6% respecto al mismo per\u00edodo de 2024. El crecimiento se explica por un aumento de 21,9% en las Iniciativas de Inversi\u00f3n, un aumento 37,0% en Transferencias de Capital, y un aumento de 213,0% en Transferencias Corrientes.","2025-4":"Al cierre del a\u00f1o 2025, los gastos de los Gobiernos Regionales alcanzaron $1.754.036 millones, registrando un aumento de $318.293 millones (22,2%) respecto de 2024. Este crecimiento se explica principalmente por mayores Iniciativas de Inversi\u00f3n ($92.677 millones; 16,0%), Transferencias de Capital ($79.395 millones; 28,7%) y Transferencias Corrientes ($127.029 millones; 75,9%)."},"mun_ing":{"2025-1":"Los ingresos en el primer trimestre del 2025 aumentaron un 1,6% respecto al mismo periodo del a\u00f1o anterior. El 21,9% de los ingresos provinieron de los Ingresos Propios, seguido por Ingresos por percibir con un 21,5% y Transferencias MINSAL con un 15,0%.","2025-2":"Los ingresos al segundo trimestre del 2025 aumentaron un 3,0% respecto al mismo periodo del a\u00f1o anterior. El 21,2% de los ingresos provinieron de los Ingresos Propios, seguido por las Transferencias MINSAL con un 18,7% y el Fondo Com\u00fan Municipal con un 16,8%.","2025-3":"Al tercer trimestre de 2025, los ingresos registraron un aumento del 3,8% respecto al mismo periodo del a\u00f1o anterior. La principal fuente de ingresos fueron los Ingresos Propios que representaron el 24,1% del total, seguidos por las Transferencias MINSAL con un 18,8% y el Fondo Com\u00fan Municipal con un 17,7%.","2025-4":"Al cierre del a\u00f1o 2025, los ingresos del sector municipal registraron un aumento del 2,8% respecto al a\u00f1o anterior. La principal fuente fueron los Ingresos Propios (23,3%), seguidos por las Transferencias MINSAL (20,1%) y el Fondo Com\u00fan Municipal (19,3%). Destac\u00f3 el incremento en el FCM (8,6%) y en las Transferencias MINSAL (7,2%)."},"mun_gas":{"2025-1":"Al primer trimestre del 2025 el 46,2% de los gastos correspondieron a Gastos en Personal, un 19,4% a Transferencias Corrientes seguido por un 19,3% a Bienes y Servicios de Consumo.","2025-2":"Al segundo trimestre del 2025, el 46,7% de los gastos correspondieron a Gastos en Personal, un 21,3% a Transferencias Corrientes seguido por un 20,7% a Bienes y Servicios de Consumo.","2025-3":"Al tercer trimestre del 2025, los Gastos en Personal representaron el 47,7% del total de gastos, seguidos por Bienes y Servicios de Consumo con un 21,5% y por Transferencias Corrientes con un 20,7%.","2025-4":"Al cierre del a\u00f1o 2025, los gastos del sector municipal aumentaron un 1,3% respecto al a\u00f1o anterior. El principal componente fue el Gasto en Personal (48,3%), seguido por Bienes y Servicios de Consumo (22,9%) y Transferencias Corrientes (19,2%). Destac\u00f3 el aumento en Servicio de la Deuda (24,3%)."},"emp":{"2025-1":"En el primer trimestre de 2025, las utilidades de las Empresas del Estado alcanzaron los $306.296 millones, lo que representa un aumento de $241.277 millones respecto al mismo per\u00edodo de 2024. CODELCO registr\u00f3 una p\u00e9rdida de $24.045 millones. En contraste, ENAMI, METRO y Otras Empresas del Estado e ITC obtuvieron utilidades, revirtiendo p\u00e9rdidas del a\u00f1o anterior.","2025-2":"En el segundo trimestre de 2025, las utilidades de las Empresas del Estado ascendieron a $729.410 millones, presentando un aumento de $303.509 millones respecto al mismo per\u00edodo del a\u00f1o anterior. CODELCO present\u00f3 una utilidad de $62.526 millones, representando una disminuci\u00f3n de $201.470 millones. ENAMI, METRO y Empresas de Defensa presentaron utilidades habiendo tenido p\u00e9rdidas en el mismo per\u00edodo del a\u00f1o anterior.","2025-3":"Al tercer trimestre de 2025, las utilidades de las Empresas del Estado alcanzaron los $967.274 millones, lo que representa un aumento de $153.381 millones respecto al mismo per\u00edodo del a\u00f1o anterior. CODELCO registr\u00f3 utilidades por $109.387 millones. ENAP represent\u00f3 el mayor monto de utilidades. METRO y EFE redujeron sus p\u00e9rdidas.","2025-4":"Al 2025, las utilidades de las Empresas del Estado alcanzaron los $3.510.719 millones, lo que representa un aumento de $2.676.615 millones respecto al a\u00f1o anterior. CODELCO registr\u00f3 utilidades por $2.202.824 millones, evidenciando un aumento de $1.944.649 millones. Las Empresas de Defensa registraron utilidades, en contraste con las p\u00e9rdidas del a\u00f1o anterior."},"edu_ing":{"2025-1":"En el primer trimestre de 2025, los principales ingresos correspondieron a Ingresos de la Operaci\u00f3n los cuales disminuyeron en un 8,2% respecto al primer trimestre del a\u00f1o anterior, mientras que las transferencias disminuyeron en un 27,4%.","2025-2":"En el segundo trimestre de 2025 se registr\u00f3 un cumplimiento del 30,3%, frente al 93,9% del mismo per\u00edodo de 2024; por lo tanto, los resultados no deben considerarse directamente comparables.","2025-3":"Al tercer trimestre de 2025, los principales ingresos correspondieron a Ingresos de la Operaci\u00f3n los cuales aumentaron en un 10,4% respecto al mismo periodo del a\u00f1o anterior, mientras que las Transferencias aumentaron en un 12,9%.","2025-4":"Al 31 de Diciembre de 2025, los principales ingresos correspondieron a Ingresos de la Operaci\u00f3n los cuales aumentaron en un 9,3% respecto al mismo periodo del a\u00f1o anterior, mientras que las Transferencias aumentaron en un 7,3%."},"edu_gas":{"2025-1":"En el primer trimestre de 2025, los principales gastos correspondieron a Gastos en Personal los cuales disminuyeron en un 46,2% y los Compromisos Pendientes que disminuyeron un 49,4% en comparaci\u00f3n con el primer trimestre de 2024.","2025-2":"En el segundo trimestre de 2025, los resultados no deben considerarse directamente comparables con el mismo per\u00edodo de 2024 debido al bajo cumplimiento del 30,3%.","2025-3":"Al tercer trimestre del 2025, los principales gastos de la educaci\u00f3n correspondieron a Gastos en Personal los cuales aumentaron en un 4,0% y las Compras de Bienes y Servicios que disminuyeron un 12,4% en comparaci\u00f3n con el tercer trimestre de 2024.","2025-4":"Al cierre de 2025, los principales gastos correspondieron a Gastos en Personal, que aumentaron en 10,9%, y a Compras de Bienes y Servicios, que crecieron en 2,5%. Asimismo, la Inversi\u00f3n Real aument\u00f3 en 74,2% y los Compromisos Pendientes disminuyeron en 19,3%."},"grat":{"2025-1":"En 2025, las transferencias realizadas por el Ministerio de Educaci\u00f3n (MINEDUC) a la educaci\u00f3n superior ascendieron a $749.619 millones. De dicho monto, un 70,0% se destin\u00f3 al financiamiento de la Gratuidad.","2025-2":"En 2025, las transferencias realizadas por el Ministerio de Educaci\u00f3n (MINEDUC) a la educaci\u00f3n superior ascendieron a $1.448.715 millones. De dicho monto, un 73,2% se destin\u00f3 al financiamiento de la gratuidad.","2025-3":"Al tercer trimestre de 2025, las transferencias realizadas por el MINEDUC a la Educaci\u00f3n Superior ascendieron a $2.184.735 millones. De dicho monto, un 74,6% se destin\u00f3 al financiamiento de la Gratuidad.","2025-4":"Las transferencias realizadas por el Ministerio de Educaci\u00f3n (MINEDUC) a la Educaci\u00f3n Superior ascendieron a $3.057.753 millones en 2025. De dicho monto, un 72,8% se destin\u00f3 al financiamiento de la Gratuidad."},"deuda":{"2025-1":"La Deuda contabilizada alcanz\u00f3 el monto de $123,3 billones, correspondiendo $78,5 billones a Deuda P\u00fablica Interna y $44,8 billones a Deuda P\u00fablica Externa, mientras que, el PIB a precios corrientes alcanz\u00f3 en el periodo de 12 meses el valor de $323,0 billones.","2025-2":"La Deuda contabilizada alcanz\u00f3 el monto de $126,1 billones, correspondiendo $84,3 billones a Deuda P\u00fablica Interna y $41,8 billones a Deuda P\u00fablica Externa, mientras que el PIB a precios corrientes alcanz\u00f3 el valor de $324,1 billones.","2025-3":"La Deuda contabilizada alcanz\u00f3 el monto de $130,3 billones, correspondiendo $85,9 billones a Deuda P\u00fablica Interna y $44,3 billones a Deuda P\u00fablica Externa, mientras que el PIB alcanz\u00f3 el valor de $331,2 billones.","2025-4":"La Deuda contabilizada alcanz\u00f3 el monto de $127,4 billones, correspondiendo $85,7 billones a Deuda P\u00fablica Interna y $41,7 billones a Deuda P\u00fablica Externa, mientras que el PIB a precios corrientes alcanz\u00f3 en el periodo de 12 meses el valor de $340 billones."},"inv":{"2025-1":"Las Inversiones Financieras al primer trimestre alcanzaron $36,3 billones lo que representa el 11,5% del PIB.","2025-2":"Las Inversiones Financieras al segundo trimestre alcanzaron los $39,3 billones lo que representa un incremento de un 8,3% respecto al primer trimestre. El total de las Inversiones Financieras representa un 12,1% del PIB.","2025-3":"Las Inversiones Financieras al tercer trimestre alcanzaron los $40,0 billones lo que representa un incremento de un 9,4% respecto al a\u00f1o 2024. El total de las Inversiones Financieras representa un 12,1% del PIB.","2025-4":"Las Inversiones Financieras alcanzaron el monto de $41,5 billones lo que representa un incremento de un 13,4% respecto al a\u00f1o 2024. El total de las Inversiones Financieras representa un 12,2% del PIB."}};
 
 const KPI_MAP = {
   "2025-3":["124,6","89,0","967,3"],
@@ -734,6 +751,16 @@ function render(year, q) {
     +'</svg>';
   document.getElementById('circles-svg').innerHTML=svg;
 
+  // Narrative texts — from official PDF reports
+  function setNarr(id) {
+    var el = document.getElementById('narr-' + id);
+    var tel = document.getElementById('narr-' + id + '-txt');
+    if (!el || !tel) return;
+    var t = (NARRATIVES[id] || {})[key] || null;
+    if (t) { tel.textContent = t; el.classList.add('show'); }
+    else { el.classList.remove('show'); }
+  }
+  ['isp','gsp','gores_ing','gores_gas','mun_ing','mun_gas','emp','edu_ing','edu_gas','grat','deuda','inv'].forEach(setNarr);
 
   // Chart: Gastos sector
   var prev = getPrev(year, qi);
