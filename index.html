@@ -477,20 +477,26 @@ function initSelectors() {
   const years = [...new Set(Object.keys(DB).map(k => k.split('-')[0]))].sort((a,b) => b - a);
   const sy = document.getElementById('sel-y');
   sy.innerHTML = years.map(y => '<option value="' + y + '">' + y + '</option>').join('');
-  sy.value = years[0];
-  fillQs(years[0]);
+  // Default to 2025 if available, else first year
+  sy.value = years.indexOf('2025') >= 0 ? '2025' : years[0];
+  fillQs(sy.value, true);
 }
 
-function fillQs(year) {
+function fillQs(year, defaultQ) {
   const qs = [...new Set(Object.keys(DB).filter(k => k.startsWith(year + '-')).map(k => parseInt(k.split('-')[1])))].sort((a,b) => a - b);
   const sq = document.getElementById('sel-q');
-  const qn = ['','1er T','2do T','3er T','4to T'];
+  const qn = ['','1er Trimestre','2do Trimestre','3er Trimestre','4to Trimestre'];
   sq.innerHTML = qs.map(q => '<option value="' + q + '">' + qn[q] + '</option>').join('');
-  sq.value = Math.max(...qs);
+  // Default to Q3 if available for 2025, else max Q
+  if (defaultQ && year === '2025' && qs.indexOf(3) >= 0) {
+    sq.value = '3';
+  } else {
+    sq.value = Math.max(...qs);
+  }
 }
 
 document.getElementById('sel-y').onchange = function() {
-  fillQs(this.value);
+  fillQs(this.value, false);
   render(this.value, document.getElementById('sel-q').value);
 };
 document.getElementById('sel-q').onchange = function() {
@@ -1005,7 +1011,9 @@ function injectData(html, data, q, yr) {
    ==================================================== */
 window.addEventListener('DOMContentLoaded', function() {
   initSelectors();
-  render('2025', '3');
+  var y = document.getElementById('sel-y').value;
+  var q = document.getElementById('sel-q').value;
+  render(y, q);
 });
 </script>
 </body>
