@@ -981,16 +981,19 @@ function render(year, q) {
   const prevGS = prd ? prd.gastoSector : null;
   const prevV = prevGS ? secK.map(s => prevGS[s] || null) : null;
   const dsSec = [];
-  if (prevV) dsSec.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prevV, 'rgba(46,95,163,.35)', C1));
-  dsSec.push(ds(shortPer, secV, 'rgba(0,180,160,.65)', C2));
+  var secTotal = secV.reduce(function(a,b){return a+(b||0);},0);
+  var prevSecTotal = prevV ? prevV.reduce(function(a,b){return a+(b||0);},0) : null;
+  if (prevV) dsSec.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+prevSecTotal.toFixed(1)+'B', prevV, 'rgba(46,95,163,.35)', C1));
+  dsSec.push(ds(shortPer+'  $'+secTotal.toFixed(1)+'B', secV, 'rgba(0,180,160,.65)', C2));
   bar('c-gsec', secL, dsSec, {fmt: v => '$'+v+'B'});
 
   // Chart: Ingresos SP
   const ispL = ['Impuestos','Endeudam.','Otros Corr.','Vta.Activos','Impos.Prev.','Recup.','Otros'];
   if (d.ingresosSP) {
     const dsISP = [];
-    if (prd && prd.ingresosSP) dsISP.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prd.ingresosSP, 'rgba(46,95,163,.35)', C1));
-    dsISP.push(ds(shortPer, d.ingresosSP, 'rgba(0,180,160,.65)', C2));
+    var ispTotal = d.ingresosSP.reduce(function(a,b){return a+(b||0);},0);
+    if (prd && prd.ingresosSP) { var pIspT=prd.ingresosSP.reduce(function(a,b){return a+(b||0);},0); dsISP.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+pIspT.toFixed(1)+'B', prd.ingresosSP, 'rgba(46,95,163,.35)', C1)); }
+    dsISP.push(ds(shortPer+'  $'+ispTotal.toFixed(1)+'B', d.ingresosSP, 'rgba(0,180,160,.65)', C2));
     bar('c-isp', ispL, dsISP, {fmt: v => '$'+v+'B', rot:40});
   }
 
@@ -998,8 +1001,9 @@ function render(year, q) {
   const gspL = ['Transf.','Serv.Deuda','Personal','Seg.Social','Act.Fin.','Bs.Serv.','Otros','Inversion'];
   if (d.gastosSP) {
     const dsGSP = [];
-    if (prd && prd.gastosSP) dsGSP.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prd.gastosSP, 'rgba(46,95,163,.35)', C1));
-    dsGSP.push(ds(shortPer, d.gastosSP, 'rgba(0,180,160,.65)', C2));
+    var gspTotal = d.gastosSP.reduce(function(a,b){return a+(b||0);},0);
+    if (prd && prd.gastosSP) { var pGspT=prd.gastosSP.reduce(function(a,b){return a+(b||0);},0); dsGSP.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+pGspT.toFixed(1)+'B', prd.gastosSP, 'rgba(46,95,163,.35)', C1)); }
+    dsGSP.push(ds(shortPer+'  $'+gspTotal.toFixed(1)+'B', d.gastosSP, 'rgba(0,180,160,.65)', C2));
     bar('c-gsp', gspL, dsGSP, {fmt: v => '$'+v+'B', rot:40});
   }
 
@@ -1020,8 +1024,9 @@ function render(year, q) {
   const miL = ['Ing.Propios','MINSAL','FCM','Transf.','MINEDUC','Ing.Bfo FCM','Otros'];
   if (d.munIng) {
     const dsMI = [];
-    if (prd && prd.munIng) dsMI.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prd.munIng, 'rgba(46,95,163,.35)', C1));
-    dsMI.push(ds(shortPer, d.munIng, 'rgba(0,180,160,.65)', C2));
+    var mIngTotal = d.munIng.reduce(function(a,b){return a+(b||0);},0);
+    if (prd && prd.munIng) { var pMIT=prd.munIng.reduce(function(a,b){return a+(b||0);},0); dsMI.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pMIT/1000).toFixed(0)+'MM', prd.munIng, 'rgba(46,95,163,.35)', C1)); }
+    dsMI.push(ds(shortPer+'  $'+(mIngTotal/1000).toFixed(0)+'MM', d.munIng, 'rgba(0,180,160,.65)', C2));
     bar('c-ming', miL, dsMI, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: v => '$'+(v/1000).toFixed(0)+'MM', rot:40});
   }
 
@@ -1029,8 +1034,9 @@ function render(year, q) {
   const mgL = ['Personal','Transf.Corr.','Bs.Serv.','Ini.Inv.','Serv.Deuda','Prest.SS','Act.NF','Otros'];
   if (d.munGas) {
     const dsMG = [];
-    if (prd && prd.munGas) dsMG.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prd.munGas, 'rgba(46,95,163,.35)', C1));
-    dsMG.push(ds(shortPer, d.munGas, 'rgba(0,180,160,.65)', C2));
+    var mGasTotal = d.munGas.reduce(function(a,b){return a+(b||0);},0);
+    if (prd && prd.munGas) { var pMGT=prd.munGas.reduce(function(a,b){return a+(b||0);},0); dsMG.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pMGT/1000).toFixed(0)+'MM', prd.munGas, 'rgba(46,95,163,.35)', C1)); }
+    dsMG.push(ds(shortPer+'  $'+(mGasTotal/1000).toFixed(0)+'MM', d.munGas, 'rgba(0,180,160,.65)', C2));
     bar('c-mgas', mgL, dsMG, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: v => '$'+(v/1000).toFixed(0)+'MM', rot:40});
   }
 
@@ -1053,8 +1059,9 @@ function render(year, q) {
     const empBG = d.empresas.map(v => v >= 0 ? 'rgba(0,180,160,.7)' : 'rgba(232,51,110,.6)');
     const empBC = d.empresas.map(v => v >= 0 ? C2 : CP);
     const dsEmp = [];
-    if (prd && prd.empresas) dsEmp.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prd.empresas, 'rgba(46,95,163,.35)', C1));
-    dsEmp.push({label:shortPer, data:d.empresas, backgroundColor:empBG, borderColor:empBC, borderWidth:1});
+    var empTotal = d.empresas.reduce(function(a,b){return a+(b||0);},0);
+    if (prd && prd.empresas) { var pET=prd.empresas.reduce(function(a,b){return a+(b||0);},0); dsEmp.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+Math.round(pET)+'MM', prd.empresas, 'rgba(46,95,163,.35)', C1)); }
+    dsEmp.push({label:shortPer+'  $'+Math.round(empTotal)+'MM', data:d.empresas, backgroundColor:empBG, borderColor:empBC, borderWidth:1});
     bar('c-emp', empL, dsEmp, {fmt: v => '$'+v+'MM', ytick: v => '$'+v+'MM', rot:40, xs:9});
   }
 
@@ -1062,8 +1069,9 @@ function render(year, q) {
   const eduL = ['Ing.Op.','Transf.','Fin.Fiscal','Otros','Endeud.','Recup.','Vta.'];
   if (d.eduIng) {
     const dsEdu = [];
-    if (prd && prd.eduIng) dsEdu.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prd.eduIng, 'rgba(46,95,163,.35)', C1));
-    dsEdu.push(ds(shortPer, d.eduIng, 'rgba(0,180,160,.65)', C2));
+    var eduIngT = d.eduIng.reduce(function(a,b){return a+(b||0);},0);
+    if (prd && prd.eduIng) { var pEIT=prd.eduIng.reduce(function(a,b){return a+(b||0);},0); dsEdu.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+Math.round(pEIT)+'MM', prd.eduIng, 'rgba(46,95,163,.35)', C1)); }
+    dsEdu.push(ds(shortPer+'  $'+Math.round(eduIngT)+'MM', d.eduIng, 'rgba(0,180,160,.65)', C2));
     bar('c-edu', eduL, dsEdu, {fmt: v => '$'+v+'MM', ytick: v => '$'+v+'MM', rot:35});
   }
 
@@ -1071,8 +1079,9 @@ function render(year, q) {
   var gasIES_L = ['Personal','Bs. y Serv.','Transferencias','Inv. Real','Comp.Pend.','Serv.Deuda','Inv.Fin.'];
   if (d.eduGas) {
     var dsEdug = [];
-    if (prd && prd.eduGas) dsEdug.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prd.eduGas, 'rgba(46,95,163,.35)', C1));
-    dsEdug.push(ds(shortPer, d.eduGas, 'rgba(0,180,160,.65)', C2));
+    var eduGasT = d.eduGas.reduce(function(a,b){return a+(b||0);},0);
+    if (prd && prd.eduGas) { var pEGT=prd.eduGas.reduce(function(a,b){return a+(b||0);},0); dsEdug.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+Math.round(pEGT)+'MM', prd.eduGas, 'rgba(46,95,163,.35)', C1)); }
+    dsEdug.push(ds(shortPer+'  $'+Math.round(eduGasT)+'MM', d.eduGas, 'rgba(0,180,160,.65)', C2));
     bar('c-edug', gasIES_L, dsEdug, {fmt: v => '$'+v+'MM', ytick: v => '$'+v+'MM', rot:35});
   }
 
@@ -1142,28 +1151,27 @@ function render(year, q) {
   const gIngL = ['Transf.Capital','Transf.Corrientes','Otros'];
   if (d.gobIng) {
     const dsGI = [];
-    if (prd && prd.gobIng) dsGI.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prd.gobIng, 'rgba(46,95,163,.35)', C1));
-    dsGI.push(ds(shortPer, d.gobIng, 'rgba(0,180,160,.65)', C2));
+    var gobIngT = d.gobIng.reduce(function(a,b){return a+(b||0);},0);
+    if (prd && prd.gobIng) { var pGIT=prd.gobIng.reduce(function(a,b){return a+(b||0);},0); dsGI.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pGIT/1000).toFixed(0)+'MM', prd.gobIng, 'rgba(46,95,163,.35)', C1)); }
+    dsGI.push(ds(shortPer+'  $'+(gobIngT/1000).toFixed(0)+'MM', d.gobIng, 'rgba(0,180,160,.65)', C2));
     bar('c-ging', gIngL, dsGI, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: v => '$'+(v/1000).toFixed(0)+'MM'});
   }
 
   const gGasL = ['Ini.Inversion','Transf.Cap.','Adq.Act.','Personal','Transf.Corr.','Serv.Deuda','Otros'];
   if (d.gobGas) {
     const dsGG = [];
-    if (prd && prd.gobGas) dsGG.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0], prd.gobGas, 'rgba(46,95,163,.35)', C1));
-    dsGG.push(ds(shortPer, d.gobGas, 'rgba(0,180,160,.65)', C2));
+    var gobGasT = d.gobGas.reduce(function(a,b){return a+(b||0);},0);
+    if (prd && prd.gobGas) { var pGGT=prd.gobGas.reduce(function(a,b){return a+(b||0);},0); dsGG.push(ds('T'+prev.split('-')[1]+' '+prev.split('-')[0]+'  $'+(pGGT/1000).toFixed(0)+'MM', prd.gobGas, 'rgba(46,95,163,.35)', C1)); }
+    dsGG.push(ds(shortPer+'  $'+(gobGasT/1000).toFixed(0)+'MM', d.gobGas, 'rgba(0,180,160,.65)', C2));
     bar('c-ggas', gGasL, dsGG, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: v => '$'+(v/1000).toFixed(0)+'MM', rot:40});
   }
 }
 
 function getPrev(year, q) {
-  // Compare same quarter, previous year (e.g. 2025-T3 vs 2024-T3)
+  // Compare SAME quarter, previous year only (e.g. T1 2025 vs T1 2024)
   const y = parseInt(year), qi = parseInt(q);
   const sameQprevY = (y-1) + '-' + qi;
-  if (DB[sameQprevY]) return sameQprevY;
-  // fallback: any available period from previous year
-  const fallback = [(y-1)+'-4',(y-1)+'-3',(y-1)+'-2',(y-1)+'-1'];
-  return fallback.find(k => DB[k]) || null;
+  return DB[sameQprevY] ? sameQprevY : null;
 }
 
 /* ====================================================
