@@ -187,8 +187,118 @@ footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center
         <option value="4">4to Trimestre</option>
       </select>
       <span class="data-badge" id="data-badge">Ene–Sep 2025</span>
+      <button onclick="openAdmin()" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);color:white;padding:5px 14px;border-radius:5px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit">
+        ⚙️ Actualizar
+      </button>
     </div>
   </div>
+</div>
+
+<!-- ===== ADMIN MODAL ===== -->
+<div id="admin-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center">
+<div style="background:white;border-radius:12px;width:100%;max-width:520px;margin:1rem;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden">
+
+  <!-- Modal header -->
+  <div style="background:#1a2744;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="color:white;font-weight:700;font-size:15px">Actualizar dashboard</div>
+      <div style="color:rgba(255,255,255,0.6);font-size:11px;margin-top:2px">Sube el PDF del IGFE y actualiza automáticamente</div>
+    </div>
+    <button onclick="closeAdmin()" style="background:rgba(255,255,255,0.1);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
+  </div>
+
+  <div style="padding:1.5rem">
+
+    <!-- Step 1: Credentials -->
+    <div id="adm-step-creds">
+      <div style="font-size:12px;font-weight:700;color:#1a2744;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">1 · Credenciales <span style="font-size:10px;color:#888;font-weight:400;text-transform:none">(guardadas en el navegador)</span></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div>
+          <label style="font-size:10px;color:#888;display:block;margin-bottom:3px">Usuario GitHub</label>
+          <input id="adm-user" placeholder="usuario" style="width:100%;padding:7px 10px;border:1px solid #dde;border-radius:6px;font-size:12px;outline:none" value="garrinchashirts-create">
+        </div>
+        <div>
+          <label style="font-size:10px;color:#888;display:block;margin-bottom:3px">Repositorio</label>
+          <input id="adm-repo" placeholder="igfe-dashboard" style="width:100%;padding:7px 10px;border:1px solid #dde;border-radius:6px;font-size:12px;outline:none" value="igfe-dashboard">
+        </div>
+      </div>
+
+      <div style="margin-bottom:8px">
+        <label style="font-size:10px;color:#888;display:block;margin-bottom:3px">🔑 GitHub Token (classic, scope: repo)</label>
+        <div style="position:relative">
+          <input id="adm-token" type="password" placeholder="ghp_xxxxxxxxxxxx" style="width:100%;padding:7px 10px;border:1px solid #dde;border-radius:6px;font-size:12px;outline:none;padding-right:70px">
+          <button onclick="togglePwd('adm-token',this)" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#888;font-size:11px;cursor:pointer">Mostrar</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <label style="font-size:10px;color:#888;display:block;margin-bottom:3px">🤖 Anthropic API Key</label>
+        <div style="position:relative">
+          <input id="adm-claude" type="password" placeholder="sk-ant-xxxxxxxxxxxx" style="width:100%;padding:7px 10px;border:1px solid #dde;border-radius:6px;font-size:12px;outline:none;padding-right:70px">
+          <button onclick="togglePwd('adm-claude',this)" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#888;font-size:11px;cursor:pointer">Mostrar</button>
+        </div>
+        <div style="font-size:10px;color:#aaa;margin-top:3px">Crea tu clave en <a href="https://console.anthropic.com/keys" target="_blank" style="color:#00b4a0">console.anthropic.com/keys</a></div>
+      </div>
+
+      <button onclick="saveAdmCreds()" style="width:100%;background:#1a2744;color:white;border:none;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Guardar y continuar →</button>
+      <div id="adm-creds-ok" style="display:none;margin-top:8px;background:#e8f8f5;border:1px solid #00b4a0;border-radius:6px;padding:8px;font-size:11px;color:#006b5e">✓ Credenciales guardadas. Continúa con el PDF abajo.</div>
+    </div>
+
+    <hr style="border:none;border-top:1px solid #eee;margin:1rem 0">
+
+    <!-- Step 2: PDF + Quarter -->
+    <div>
+      <div style="font-size:12px;font-weight:700;color:#1a2744;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">2 · PDF del nuevo trimestre</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div>
+          <label style="font-size:10px;color:#888;display:block;margin-bottom:3px">Trimestre</label>
+          <select id="adm-q" style="width:100%;padding:7px 10px;border:1px solid #dde;border-radius:6px;font-size:12px;color:#1a2744;background:white">
+            <option value="1">1er Trimestre</option>
+            <option value="2">2do Trimestre</option>
+            <option value="3" selected>3er Trimestre</option>
+            <option value="4">4to Trimestre</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px;color:#888;display:block;margin-bottom:3px">Año</label>
+          <input id="adm-year" value="2025" style="width:100%;padding:7px 10px;border:1px solid #dde;border-radius:6px;font-size:12px;outline:none">
+        </div>
+      </div>
+
+      <!-- Drop zone -->
+      <div id="adm-drop" style="border:2px dashed #dde;border-radius:8px;padding:1.5rem;text-align:center;cursor:pointer;position:relative;transition:all 0.2s;margin-bottom:10px">
+        <input type="file" accept=".pdf" id="adm-file-input" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%" onchange="handleAdmFile(this.files[0])">
+        <div style="font-size:24px;margin-bottom:4px">📄</div>
+        <div style="font-size:12px;color:#888">Arrastra el PDF aquí o haz clic</div>
+        <div style="font-size:10px;color:#bbb;margin-top:2px">Solo archivos .pdf</div>
+      </div>
+
+      <div id="adm-file-tag" style="display:none;background:#e8f8f5;border:1px solid #00b4a0;border-radius:6px;padding:8px 12px;font-size:11px;color:#006b5e;margin-bottom:10px;display:none;align-items:center;gap:8px">
+        📎 <span id="adm-fname"></span>
+        <span id="adm-fsize" style="color:#888;margin-left:auto"></span>
+        <button onclick="clearAdmFile()" style="background:none;border:none;color:#888;cursor:pointer;font-size:13px">✕</button>
+      </div>
+
+      <button id="adm-go-btn" onclick="runUpdate()" disabled style="width:100%;background:#00b4a0;color:white;border:none;padding:10px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;opacity:0.5;transition:opacity 0.2s">
+        Analizar PDF y publicar →
+      </button>
+    </div>
+
+    <!-- Progress -->
+    <div id="adm-progress" style="display:none;margin-top:1rem">
+      <div style="height:4px;background:#eee;border-radius:99px;overflow:hidden;margin-bottom:10px">
+        <div id="adm-prog-bar" style="height:100%;background:#00b4a0;border-radius:99px;width:0;transition:width 0.4s ease"></div>
+      </div>
+      <div id="adm-log" style="background:#f5f7fa;border:1px solid #eee;border-radius:6px;padding:10px;font-family:monospace;font-size:10px;line-height:1.8;max-height:160px;overflow-y:auto"></div>
+    </div>
+
+    <!-- Result -->
+    <div id="adm-result" style="display:none;margin-top:1rem;padding:12px;border-radius:6px;font-size:12px"></div>
+
+  </div>
+</div>
 </div>
 
 <!-- COVER BAND -->
@@ -1060,7 +1170,357 @@ function applyFilters() {
 }
 
 // Init
-window.addEventListener('DOMContentLoaded', () => render('2025','3'));
+window.addEventListener('DOMContentLoaded', () => {
+  render('2025','3');
+  loadAdmCreds();
+  setupAdmDrop();
+});
+
+/* ======================================================
+   ADMIN PANEL
+   ====================================================== */
+let admPdfB64 = null;
+
+function openAdmin() {
+  document.getElementById('admin-overlay').style.display = 'flex';
+  loadAdmCreds();
+}
+function closeAdmin() {
+  document.getElementById('admin-overlay').style.display = 'none';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeAdmin(); });
+document.getElementById('admin-overlay').addEventListener('click', e => {
+  if(e.target===document.getElementById('admin-overlay')) closeAdmin();
+});
+
+function togglePwd(id, btn) {
+  const el = document.getElementById(id);
+  el.type = el.type==='password' ? 'text' : 'password';
+  btn.textContent = el.type==='password' ? 'Mostrar' : 'Ocultar';
+}
+
+function loadAdmCreds() {
+  const s = localStorage.getItem('igfe_adm');
+  if (!s) return;
+  const c = JSON.parse(s);
+  if (c.user)   document.getElementById('adm-user').value   = c.user;
+  if (c.repo)   document.getElementById('adm-repo').value   = c.repo;
+  if (c.token)  document.getElementById('adm-token').value  = c.token;
+  if (c.claude) document.getElementById('adm-claude').value = c.claude;
+  if (c.token && c.claude) {
+    document.getElementById('adm-creds-ok').style.display = 'block';
+  }
+}
+
+function saveAdmCreds() {
+  const c = {
+    user:   document.getElementById('adm-user').value.trim(),
+    repo:   document.getElementById('adm-repo').value.trim(),
+    token:  document.getElementById('adm-token').value.trim(),
+    claude: document.getElementById('adm-claude').value.trim(),
+  };
+  if (!c.token || !c.claude) {
+    alert('Introduce el GitHub Token y la Anthropic API Key.');
+    return;
+  }
+  localStorage.setItem('igfe_adm', JSON.stringify(c));
+  document.getElementById('adm-creds-ok').style.display = 'block';
+}
+
+function setupAdmDrop() {
+  const zone = document.getElementById('adm-drop');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor='#00b4a0'; zone.style.background='#e8f8f5'; });
+  zone.addEventListener('dragleave', () => { zone.style.borderColor='#dde'; zone.style.background=''; });
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.style.borderColor='#dde'; zone.style.background='';
+    const f = e.dataTransfer.files[0];
+    if (f?.type==='application/pdf') handleAdmFile(f);
+  });
+}
+
+function handleAdmFile(file) {
+  if (!file) return;
+  admPdfB64 = null;
+  document.getElementById('adm-fname').textContent = file.name;
+  document.getElementById('adm-fsize').textContent = (file.size/1024).toFixed(0)+' KB';
+  const tag = document.getElementById('adm-file-tag');
+  tag.style.display = 'flex';
+  document.getElementById('adm-go-btn').disabled = false;
+  document.getElementById('adm-go-btn').style.opacity = '1';
+  const r = new FileReader();
+  r.onload = e => { admPdfB64 = e.target.result.split(',')[1]; };
+  r.readAsDataURL(file);
+}
+
+function clearAdmFile() {
+  admPdfB64 = null;
+  document.getElementById('adm-file-input').value = '';
+  document.getElementById('adm-file-tag').style.display = 'none';
+  document.getElementById('adm-go-btn').disabled = true;
+  document.getElementById('adm-go-btn').style.opacity = '0.5';
+}
+
+function admLog(msg, type='info') {
+  const el = document.getElementById('adm-log');
+  const colors = {ok:'#00875a', err:'#c0392b', info:'#555', acc:'#00b4a0'};
+  const icons  = {ok:'✓', err:'✗', info:'·', acc:'→'};
+  const t = new Date().toLocaleTimeString('es',{hour12:false});
+  el.innerHTML += `<div><span style="color:#bbb">${t}</span> <span style="color:${colors[type]}">${icons[type]} ${msg}</span></div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function setProg(pct) {
+  document.getElementById('adm-prog-bar').style.width = pct+'%';
+}
+
+async function runUpdate() {
+  const s = localStorage.getItem('igfe_adm');
+  if (!s) { alert('Guarda las credenciales primero.'); return; }
+  const cfg = JSON.parse(s);
+  if (!admPdfB64) { alert('Selecciona un PDF primero.'); return; }
+
+  const q    = document.getElementById('adm-q').value;
+  const year = document.getElementById('adm-year').value.trim();
+
+  document.getElementById('adm-progress').style.display = 'block';
+  document.getElementById('adm-result').style.display = 'none';
+  document.getElementById('adm-log').innerHTML = '';
+  document.getElementById('adm-go-btn').disabled = true;
+  setProg(5);
+
+  try {
+    // 1. Extract with Claude
+    admLog(`Analizando PDF con Claude (claude-sonnet-4-6)…`);
+    const data = await extractWithClaude(cfg.claude, q, year);
+    setProg(40);
+    admLog('Datos extraídos correctamente', 'ok');
+
+    // 2. Get current file from GitHub
+    admLog('Descargando index.html desde GitHub…');
+    const {content: html, sha} = await ghGet(cfg, 'index.html');
+    setProg(55);
+    admLog('Archivo descargado', 'ok');
+
+    // 3. Inject new data
+    admLog('Inyectando datos en el dashboard…');
+    const updated = injectNewData(html, data, q, year);
+    setProg(70);
+    admLog('Datos inyectados', 'ok');
+
+    // 4. Push to GitHub
+    admLog('Publicando en GitHub…');
+    const qTag = ['1T','2T','3T','4T'][parseInt(q)-1];
+    await ghPut(cfg, 'index.html', updated, sha, `Update IGFE ${qTag} ${year}`);
+    setProg(100);
+    admLog(`Commit publicado: IGFE ${qTag} ${year}`, 'ok');
+    admLog(`→ https://${cfg.user}.github.io/${cfg.repo}/`, 'acc');
+
+    showAdmResult(true, cfg, q, year);
+
+  } catch(err) {
+    admLog('Error: '+err.message, 'err');
+    showAdmResult(false, cfg, q, year, err.message);
+  }
+  document.getElementById('adm-go-btn').disabled = false;
+}
+
+function showAdmResult(ok, cfg, q, year, errMsg) {
+  const el = document.getElementById('adm-result');
+  el.style.display = 'block';
+  const qTag = ['1T','2T','3T','4T'][parseInt(q)-1];
+  if (ok) {
+    el.style.background = '#e8f8f5';
+    el.style.border = '1px solid #00b4a0';
+    el.style.color = '#006b5e';
+    el.innerHTML = `<strong>✓ Dashboard actualizado: IGFE ${qTag} ${year}</strong><br>
+      <span style="font-size:11px">Disponible en 1–2 min en <a href="https://${cfg.user}.github.io/${cfg.repo}/" target="_blank" style="color:#00b4a0">https://${cfg.user}.github.io/${cfg.repo}/</a></span>`;
+    // Reload page after 3s
+    setTimeout(() => { closeAdmin(); location.reload(); }, 3000);
+  } else {
+    el.style.background = '#fdf0f0';
+    el.style.border = '1px solid #e8336e';
+    el.style.color = '#8b0000';
+    el.innerHTML = `<strong>✗ Error al actualizar</strong><br><span style="font-size:11px">${errMsg}</span>`;
+  }
+}
+
+/* ===== GITHUB API ===== */
+async function ghGet(cfg, path) {
+  const r = await fetch(`https://api.github.com/repos/${cfg.user}/${cfg.repo}/contents/${path}`, {
+    headers: {'Authorization': `Bearer ${cfg.token}`, 'Accept': 'application/vnd.github.v3+json'}
+  });
+  if (!r.ok) { const e=await r.json(); throw new Error(e.message||r.statusText); }
+  const d = await r.json();
+  return { content: decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))), sha: d.sha };
+}
+
+async function ghPut(cfg, path, content, sha, message) {
+  const encoded = btoa(unescape(encodeURIComponent(content)));
+  const r = await fetch(`https://api.github.com/repos/${cfg.user}/${cfg.repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: {'Authorization': `Bearer ${cfg.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json'},
+    body: JSON.stringify({message, content: encoded, sha})
+  });
+  if (!r.ok) { const e=await r.json(); throw new Error(e.message||r.statusText); }
+  return r.json();
+}
+
+/* ===== CLAUDE EXTRACTION ===== */
+async function extractWithClaude(apiKey, q, year) {
+  const qNames = ['primer','segundo','tercer','cuarto'];
+  const prompt = `Eres un analista financiero experto. Analiza este PDF del IGFE (${qNames[parseInt(q)-1]} trimestre de ${year}).
+Extrae TODOS los valores numéricos y responde ÚNICAMENTE con este JSON (sin texto extra, sin markdown):
+{"quarter":${q},"year":"${year}","kpis":{"gastoTotal":"124,6","ingresoPublico":"89,0","entidades":"709","deudaPIB":"39,4","inversionesFinancieras":"40,0","utilidadesEmpresas":"967,3","entidadesDetalle":"299 · 345 · 32 · 33"},"cumplimiento":{"sectorPublico":99.0,"municipal":98.8,"empresasEstado":90.6,"educacionSuperior":84.9},"ejecucion":{"sectorPublico":75.1,"municipal":65.0,"empresasEstado":81.7,"educacionSuperior":63.3},"sectores":{"codelco":"$23,0B","ies":"$1,4B","publico":"$79,1B","empresas":"$10,7B","municipal":"$10,4B"},"gastoSector":{"labels":["Sector Público","Sector Municipal","Emp.+CODELCO","Educ. Superior"],"prev":[77.8,10.2,29.8,1.4],"curr":[79.1,10.4,33.7,1.4],"ejec":[75.1,65.0,81.7,63.3]},"ingresosSP":{"labels":["Impuestos","Endeudam.","Recup.Prést.","Otros Corr.","Impos.Prev.","Ing.Oper.","Vta.Activos","Otros"],"prev":[51.7,25.2,3.1,2.7,2.5,3.5,1.1,1.7],"curr":[55.9,19.0,3.1,2.7,2.7,3.1,1.1,1.4]},"gastosSP":{"labels":["Transferencias","Prest.Seg.Soc.","Serv.Deuda","Bs.y Serv.","Gtos.Personal","Adq.Act.Fin.","Ini.Inversión","Otros"],"prev":[22.6,15.2,18.4,10.9,11.6,4.5,2.3,2.1],"curr":[24.4,12.3,11.7,11.7,12.3,5.1,3.5,3.2]},"rankingAlto":[{"name":"Min. Bienes Nacionales","pct":97.3},{"name":"Contraloría General","pct":90.8},{"name":"Min. Interior y Seg. Pública","pct":85.0},{"name":"Min. Mujer y Eq. Género","pct":84.9},{"name":"Min. Hacienda","pct":82.6},{"name":"Min. Salud","pct":81.8},{"name":"Min. Justicia y DDHH","pct":81.2},{"name":"Presidencia de la República","pct":80.2},{"name":"Ministerio Público","pct":78.0},{"name":"Poder Judicial","pct":77.1}],"rankingBajo":[{"name":"Min. Economía y Turismo","pct":35.2},{"name":"Servicio Electoral","pct":45.4},{"name":"Min. Ciencia y Tec.","pct":58.8},{"name":"Min. Medio Ambiente","pct":63.3},{"name":"Min. Obras Públicas","pct":65.2},{"name":"Min. Des. Social y Familia","pct":66.6},{"name":"Min. Deporte","pct":68.7},{"name":"Min. Vivienda y Urbanismo","pct":69.3},{"name":"Min. Culturas y Patrimonio","pct":69.3},{"name":"Min. Educación","pct":71.3}],"ingMun":{"labels":["Ing. Propios","Transf.","Transf. MINSAL","FCM","Transf.MINEDUC","Ing.Bfo FCM","Otros"],"prev":[2704.7,1891.5,2065.3,1811.1,1054.7,943.9,928.7],"curr":[2846.9,2093.8,2218.7,1590.5,1088.7,1032.6,959.3]},"gasMun":{"labels":["Gtos.Personal","Bs.y Serv.","Transf.Corr.","Ini.Inversión","Serv.Deuda","Prest.Seg.Soc.","Adq.Act.","Otros"],"prev":[4948.2,2126.3,2140.0,419.3,223.9,110.2,110.2,109.4],"curr":[4967.5,2242.7,2155.7,427.1,276.2,110.4,103.4,124.8]},"fcm":{"labels":["Aysén","Atacama","Arica","Ñuble","Magallanes","Los Ríos","O'Higgins","Valparaíso","Araucanía","Coquimbo","Biobío","Maule","Los Lagos","Tarapacá","Antofagasta","Metropolitana"],"vals":[44.9,27.2,26.2,24.9,23.9,23.5,21.5,21.4,21.1,21.0,19.1,18.7,18.4,14.8,13.4,12.3],"avg":17.7},"empresas":{"labels":["ENAP","CODELCO","ENAMI","Emp.Defensa","BancoEstado","Otras Emp.","Emp.Portuarias","METRO","EFE","TVN"],"prev":[293.9,198.3,42.9,-14.4,2.4,366.1,137.9,-12.4,-75.9,-5.9],"curr":[485.1,109.4,46.8,11.5,5.8,382.5,42.9,-45.5,-129.6,-16.3]},"educ":{"labels":["Ing.Operación","Transferencias","Finan.Fiscal","Endeudamiento","Vta.Activos","Recup.Préstamos","Otros"],"prev":[700.2,322.5,161.0,89.6,24.6,8.1,3.8],"curr":[772.9,364.0,161.6,80.9,33.0,11.9,1.8]},"gratuidad":{"years":["2021","2022","2023","2024","3T ${year}"],"totales":[1.9,2.1,2.4,2.8,2.18],"pcts":[62.7,65.1,68.4,71.1,74.6]},"deuda":{"totalB":130.3,"internaB":85.9,"externaB":44.3,"totalPIB":39.4,"internaPIB":26.0,"externaPIB":13.4,"hist":{"years":["2021","2022","2023","2024","3T ${year}"],"interna":[23.5,22.3,23.4,24.6,26.0],"externa":[12.3,12.7,13.0,13.6,13.4]}},"inversiones":{"totalB":40.0,"pib":12.1,"hist":{"years":["2021","2022","2023","2024","3T ${year}"],"pib":[12.1,13.6,12.2,11.7,12.1]}},"gobIng":{"labels":["Transf. Capital","Transf. Corrientes","Otros"],"prev":[1052.8,91.5,24.0],"curr":[1167.9,124.8,23.8]},"gobGas":{"labels":["Ini.Inversión","Transf.Capital","Adq.Act.","Gtos.Personal","Transf.Corr.","Serv.Deuda","Otros"],"prev":[467.3,133.6,68.9,63.0,19.2,16.2,113.6],"curr":[383.3,219.8,74.5,67.2,160.4,147.9,72.1]}}
+Sustituye TODOS los valores con los del PDF. Si no encuentras un valor mantén el del ejemplo.`;
+
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4096,
+      messages: [{
+        role: 'user',
+        content: [
+          {type:'document', source:{type:'base64', media_type:'application/pdf', data:admPdfB64}},
+          {type:'text', text:prompt}
+        ]
+      }]
+    })
+  });
+  if (!r.ok) { const e=await r.json(); throw new Error('Claude API: '+(e.error?.message||r.statusText)); }
+  const resp = await r.json();
+  const text = resp.content.find(b=>b.type==='text')?.text||'';
+  return JSON.parse(text.replace(/```json|```/g,'').trim());
+}
+
+/* ===== DATA INJECTION ===== */
+function injectNewData(html, d, q, year) {
+  const periods = ['Ene–Mar','Ene–Jun','Ene–Sep','Ene–Dic'];
+  const periodLongs = [
+    `Al 1er Trimestre ${year} · 1 de Enero al 31 de Marzo`,
+    `Al 2do Trimestre ${year} · 1 de Enero al 30 de Junio`,
+    `Al 3er Trimestre ${year} · 1 de Enero al 30 de Septiembre`,
+    `Al 4to Trimestre ${year} · 1 de Enero al 31 de Diciembre`
+  ];
+  const qi = parseInt(q)-1;
+  const period = periods[qi]+' '+year;
+  const qTag = ['1T','2T','3T','4T'][qi];
+
+  // Build the new data entry
+  const newEntry = `"${year}": {
+    "${q}": {
+      period:"${period}",
+      periodLong:"${periodLongs[qi]}",
+      totalEjecutado:"$${d.kpis.gastoTotal} billones",
+      kpis:[
+        {label:"Gasto total estado",val:"${d.kpis.gastoTotal}",unit:"B$",delta:"${qTag} ${year}",up:true,color:"#00b4a0"},
+        {label:"Ingreso sector público",val:"${d.kpis.ingresoPublico}",unit:"B$",delta:"${qTag} ${year}",up:null,color:"#e8336e"},
+        {label:"Entidades reportando",val:"${d.kpis.entidades}",unit:"",delta:"${d.kpis.entidadesDetalle}",up:null,color:"#2e5fa3"},
+        {label:"Deuda pública / PIB",val:"${d.kpis.deudaPIB}",unit:"%",delta:"${qTag} ${year}",up:false,color:"#f0a500"},
+        {label:"Inversiones financieras",val:"${d.kpis.inversionesFinancieras}",unit:"B$",delta:"Total",up:true,color:"#00b4a0"},
+        {label:"Utilidades emp. estado",val:"${d.kpis.utilidadesEmpresas}",unit:"MM$",delta:"${qTag} ${year}",up:true,color:"#1ab05a"},
+      ],
+      cobertura:[
+        {num:"299",label:"Sector Público",color:"#2e5fa3"},
+        {num:"345",label:"Sector Municipal",color:"#e8336e"},
+        {num:"32",label:"Empresas Estado e ITC",color:"#00b4a0"},
+        {num:"33",label:"Instituciones Educ. Superior",color:"#f0a500"},
+      ],
+      cumplimiento:[
+        {name:"Sector Público",pct:${d.cumplimiento.sectorPublico},color:"#2e5fa3"},
+        {name:"Sector Municipal",pct:${d.cumplimiento.municipal},color:"#e8336e"},
+        {name:"Empresas del Estado",pct:${d.cumplimiento.empresasEstado},color:"#00b4a0"},
+        {name:"Educ. Superior",pct:${d.cumplimiento.educacionSuperior},color:"#f0a500"},
+      ],
+      ejecucion:[
+        {name:"Sector Público",pct:${d.ejecucion.sectorPublico},color:"#2e5fa3"},
+        {name:"Sector Municipal",pct:${d.ejecucion.municipal},color:"#e8336e"},
+        {name:"Empresas del Estado",pct:${d.ejecucion.empresasEstado},color:"#00b4a0"},
+        {name:"Educ. Superior",pct:${d.ejecucion.educacionSuperior},color:"#f0a500"},
+      ],
+      sectores:${JSON.stringify(d.sectores)},
+      gastoSector:${JSON.stringify(d.gastoSector)},
+      ingresosSP:${JSON.stringify(d.ingresosSP)},
+      gastosSP:${JSON.stringify(d.gastosSP)},
+      rankingAlto:${JSON.stringify(d.rankingAlto)},
+      rankingBajo:${JSON.stringify(d.rankingBajo)},
+      ingMun:${JSON.stringify(d.ingMun)},
+      gasMun:${JSON.stringify(d.gasMun)},
+      fcm:${JSON.stringify(d.fcm)},
+      empresas:${JSON.stringify(d.empresas)},
+      educ:${JSON.stringify(d.educ)},
+      gratuidad:${JSON.stringify(d.gratuidad)},
+      deuda:${JSON.stringify(d.deuda)},
+      inversiones:${JSON.stringify(d.inversiones)},
+      gobIng:${JSON.stringify(d.gobIng)},
+      gobGas:${JSON.stringify(d.gobGas)}
+    }`;
+
+  // Find DB object and inject/replace the year+quarter entry
+  const dbStart = html.indexOf('const DB = {');
+  const dbEnd   = html.indexOf('\n};\n\n/* ======', dbStart);
+  let dbSection = html.slice(dbStart, dbEnd);
+
+  // Check if year exists
+  const yearKey = `"${year}": {`;
+  if (dbSection.includes(yearKey)) {
+    // Year exists — check if quarter exists
+    const qKey = `"${q}": {`;
+    const yearStart = dbSection.indexOf(yearKey);
+    // Find and replace the quarter block within the year
+    // Simple approach: replace the entire year block
+    const yearBlockStart = dbSection.indexOf(yearKey);
+    // Find matching closing brace for the year
+    let depth = 0, idx = yearBlockStart;
+    while (idx < dbSection.length) {
+      if (dbSection[idx]==='{') depth++;
+      else if (dbSection[idx]==='}') { depth--; if(depth===0){idx++;break;} }
+      idx++;
+    }
+    const yearBlock = dbSection.slice(yearBlockStart, idx);
+    // Add/replace quarter in year block
+    let newYearBlock;
+    if (yearBlock.includes(`"${q}":`)) {
+      // Replace existing quarter
+      const qStart = yearBlock.indexOf(`"${q}":`);
+      let qDepth=0, qIdx=qStart;
+      while(qIdx<yearBlock.length){
+        if(yearBlock[qIdx]==='{')qDepth++;
+        else if(yearBlock[qIdx]==='}'){qDepth--;if(qDepth===0){qIdx++;break;}}
+        qIdx++;
+      }
+      newYearBlock = yearBlock.slice(0,qStart) + `"${q}": {\n${newEntry.split('\n').slice(2).join('\n')}` + yearBlock.slice(qIdx);
+    } else {
+      // Add new quarter to existing year
+      const lastBrace = yearBlock.lastIndexOf('}');
+      newYearBlock = yearBlock.slice(0,lastBrace) + `,\n    ${newEntry.split('{')[1].replace(/^[^{]*/,'')}` + yearBlock.slice(lastBrace);
+    }
+    dbSection = dbSection.slice(0,yearBlockStart) + newYearBlock + dbSection.slice(idx);
+  } else {
+    // Year doesn't exist — add it
+    const insertAt = dbSection.lastIndexOf('};');
+    const fullEntry = `\n  ${newEntry}\n  },`;
+    dbSection = dbSection.slice(0,insertAt) + fullEntry + '\n' + dbSection.slice(insertAt);
+  }
+
+  // Update year selector to include new year if needed
+  let result = html.slice(0, dbStart) + dbSection + html.slice(dbEnd);
+  if (!result.includes(`<option value="${year}">${year}</option>`)) {
+    result = result.replace(
+      `<option value="2024">2024</option>`,
+      `<option value="${year}" selected>${year}</option>\n        <option value="2024">2024</option>`
+    );
+  }
+
+  return result;
+}
 </script>
 </body>
 </html>
