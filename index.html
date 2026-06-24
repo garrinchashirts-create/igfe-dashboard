@@ -33,7 +33,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .upd-btn:hover{background:rgba(255,255,255,.2)}
 .narr{background:#eef8f6;border-left:3px solid var(--teal);border-radius:0 6px 6px 0;padding:.65rem .9rem;margin-top:10px;font-size:11px;color:#333;line-height:1.65;display:none;position:relative;z-index:2;clear:both}
 .narr.show{display:block}
-.narr strong{color:var(--navy);font-size:10px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px}
+
 /* Period banner with selectors */
 .period-banner{background:var(--navy);border-bottom:3px solid var(--teal);padding:.65rem 1.5rem}
 .period-banner-in{max-width:1300px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -273,13 +273,13 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
         <div class="ct">Ingresos Presupuestarios Ejecutados — Sector Público</div>
         <div class="cs">Billones de pesos · comparativo año anterior</div>
         <div class="cw"><canvas id="c-isp"></canvas></div>
-      <div class="narr" id="narr-isp"><strong>Análisis</strong><span id="narr-isp-txt"></span></div>
+      <span id="narr-isp-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Gastos Presupuestarios Ejecutados — Sector Público</div>
         <div class="cs">Billones de pesos · comparativo año anterior</div>
         <div class="cw"><canvas id="c-gsp"></canvas></div>
-      <div class="narr" id="narr-gsp"><strong>Análisis</strong><span id="narr-gsp-txt"></span></div>
+      <span id="narr-gsp-txt"></span></div>
       </div>
     </div>
     <div class="g2">
@@ -305,13 +305,13 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
         <div class="cs">Porcentaje del PIB</div>
         <div class="debt-g" id="debt-g"></div>
         <div class="cw" style="height:180px"><canvas id="c-deuda"></canvas></div>
-      <div class="narr" id="narr-deuda"><strong>Análisis</strong><span id="narr-deuda-txt"></span></div>
+      <span id="narr-deuda-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Evolución de las Inversiones Financieras / PIB</div>
         <div class="cs">Porcentaje del PIB</div>
         <div class="cw"><canvas id="c-inv"></canvas></div>
-      <div class="narr" id="narr-inv"><strong>Análisis</strong><span id="narr-inv-txt"></span></div>
+      <span id="narr-inv-txt"></span></div>
       </div>
     </div>
   </div>
@@ -324,13 +324,13 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
         <div class="ct">Ingresos Presupuestarios — Gobiernos Regionales</div>
         <div class="cs">Millones de pesos</div>
         <div class="cw"><canvas id="c-ging"></canvas></div>
-      <div class="narr" id="narr-gores_ing"><strong>Análisis</strong><span id="narr-gores_ing-txt"></span></div>
+      <span id="narr-gores_ing-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Gastos Presupuestarios — Gobiernos Regionales</div>
         <div class="cs">Millones de pesos</div>
         <div class="cw"><canvas id="c-ggas"></canvas></div>
-      <div class="narr" id="narr-gores_gas"><strong>Análisis</strong><span id="narr-gores_gas-txt"></span></div>
+      <span id="narr-gores_gas-txt"></span></div>
       </div>
     </div>
   </div>
@@ -343,13 +343,13 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
         <div class="ct">Ingresos Presupuestarios — Sector Municipal</div>
         <div class="cs">Millones de pesos</div>
         <div class="cw"><canvas id="c-ming"></canvas></div>
-      <div class="narr" id="narr-mun_ing"><strong>Análisis</strong><span id="narr-mun_ing-txt"></span></div>
+      <span id="narr-mun_ing-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Gastos Presupuestarios — Sector Municipal</div>
         <div class="cs">Millones de pesos</div>
         <div class="cw"><canvas id="c-mgas"></canvas></div>
-      <div class="narr" id="narr-mun_gas"><strong>Análisis</strong><span id="narr-mun_gas-txt"></span></div>
+      <span id="narr-mun_gas-txt"></span></div>
       </div>
     </div>
     <div class="card">
@@ -367,13 +367,13 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
         <div class="ct">Utilidades / Pérdidas — Empresas del Estado</div>
         <div class="cs">Millones de pesos</div>
         <div class="cw" style="height:240px"><canvas id="c-emp"></canvas></div>
-      <div class="narr" id="narr-emp"><strong>Análisis</strong><span id="narr-emp-txt"></span></div>
+      <span id="narr-emp-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Ingresos — Instituciones Educación Superior</div>
         <div class="cs">Millones de pesos</div>
         <div class="cw"><canvas id="c-edu"></canvas></div>
-      <div class="narr" id="narr-edu_ing"><strong>Análisis</strong><span id="narr-edu_ing-txt"></span></div>
+      <span id="narr-edu_ing-txt"></span></div>
       </div>
     </div>
     <div class="g2">
@@ -381,20 +381,36 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
         <div class="ct">Gastos — Instituciones Educación Superior</div>
         <div class="cs">Millones de pesos</div>
         <div class="cw"><canvas id="c-edug"></canvas></div>
-      <div class="narr" id="narr-edu_gas"><strong>Análisis</strong><span id="narr-edu_gas-txt"></span></div>
+      <span id="narr-edu_gas-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Transferencias MINEDUC a Educación Superior · % Gratuidad</div>
         <div class="cs">Billones de pesos y porcentaje destinado a gratuidad</div>
         <div class="cw"><canvas id="c-grat"></canvas></div>
-      <div class="narr" id="narr-grat"><strong>Análisis</strong><span id="narr-grat-txt"></span></div>
+      <span id="narr-grat-txt"></span></div>
       </div>
     </div>
   </div>
 </main>
 
-<footer style="background:var(--dark);color:rgba(255,255,255,.4);text-align:center;padding:.75rem;font-size:10px;margin-top:1rem">
-  IGFE · Contraloría General de la República de Chile · Fuente: Bases_tablero_IGFE.xlsx · PIB a precios corrientes Banco Central
+<footer style="background:var(--dark);color:rgba(255,255,255,.5);padding:1.25rem 1.5rem;font-size:10px;margin-top:1rem">
+  <div style="max-width:1300px;margin:0 auto">
+    <div style="border-left:3px solid var(--teal);padding-left:12px;margin-bottom:12px;line-height:1.7;color:rgba(255,255,255,.65)">
+      El artículo 142 de la ley Nº 10.336, establece que: El Contralor General dará a conocer al Presidente de la República
+      y a ambas ramas del Congreso Nacional, a más tardar en el mes de abril de cada año, un informe sobre la situación
+      presupuestaria, financiera y patrimonial del Estado correspondiente al ejercicio del año anterior.
+      Adicionalmente a partir del 3er Trimestre de 2024, se elabora un resumen trimestral.
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:6px 24px;line-height:1.6;color:rgba(255,255,255,.5)">
+      <div>• Información patrimonial y presupuestaria enviada a la Contraloría General por las entidades del Sector Público, las Municipalidades, Empresas del Estado e Institutos Tecnológicos CORFO e Instituciones de Educación Superior del Estado.</div>
+      <div>• PIB expresado a precios corrientes y considera los últimos 4 trimestres publicados por el Banco Central de Chile.</div>
+      <div>• Tipos de cambio publicados por el Banco Central de Chile en su sitio web.</div>
+      <div>• Las Empresas del Estado no consideran a BancoEstado ni a TVN, dado que dichas entidades no presentan información presupuestaria.</div>
+    </div>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.1);text-align:center;color:rgba(255,255,255,.3)">
+      IGFE · Contraloría General de la República de Chile · <strong style="color:var(--teal)">POR EL CUIDADO Y BUEN USO DE LOS RECURSOS PÚBLICOS</strong>
+    </div>
+  </div>
 </footer>
 
 <!-- MODAL -->
