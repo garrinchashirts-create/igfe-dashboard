@@ -31,7 +31,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .period-badge{background:var(--teal);color:var(--dark);padding:6px 16px;border-radius:7px;font-size:13px;font-weight:800;letter-spacing:.3px}
 .upd-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;padding:7px 14px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
 .upd-btn:hover{background:rgba(255,255,255,.2)}
-.narr{background:var(--light);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;padding:.6rem .9rem;margin-bottom:8px;font-size:11px;color:#444;line-height:1.6;display:none}
+.narr{background:#eef8f6;border-left:3px solid var(--teal);border-radius:0 6px 6px 0;padding:.65rem .9rem;margin-top:10px;font-size:11px;color:#333;line-height:1.65;display:none;position:relative;z-index:2;clear:both}
 .narr.show{display:block}
 .narr strong{color:var(--navy);font-size:10px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px}
 /* Period banner with selectors */
@@ -272,14 +272,14 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
       <div class="card">
         <div class="ct">Ingresos Presupuestarios Ejecutados — Sector Público</div>
         <div class="cs">Billones de pesos · comparativo año anterior</div>
-        <div class="cw"><canvas id="c-isp"></canvas>
-      <div class="narr" id="narr-isp"><strong>Análisis</strong><span id="narr-isp-txt"></span></div></div>
+        <div class="cw"><canvas id="c-isp"></canvas></div>
+      <div class="narr" id="narr-isp"><strong>Análisis</strong><span id="narr-isp-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Gastos Presupuestarios Ejecutados — Sector Público</div>
         <div class="cs">Billones de pesos · comparativo año anterior</div>
-        <div class="cw"><canvas id="c-gsp"></canvas>
-      <div class="narr" id="narr-gsp"><strong>Análisis</strong><span id="narr-gsp-txt"></span></div></div>
+        <div class="cw"><canvas id="c-gsp"></canvas></div>
+      <div class="narr" id="narr-gsp"><strong>Análisis</strong><span id="narr-gsp-txt"></span></div>
       </div>
     </div>
     <div class="g2">
@@ -304,14 +304,14 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
         <div class="ct">Evolución de la Deuda Pública / PIB</div>
         <div class="cs">Porcentaje del PIB</div>
         <div class="debt-g" id="debt-g"></div>
-        <div class="cw" style="height:180px"><canvas id="c-deuda"></canvas>
-      <div class="narr" id="narr-deuda"><strong>Análisis</strong><span id="narr-deuda-txt"></span></div></div>
+        <div class="cw" style="height:180px"><canvas id="c-deuda"></canvas></div>
+      <div class="narr" id="narr-deuda"><strong>Análisis</strong><span id="narr-deuda-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Evolución de las Inversiones Financieras / PIB</div>
         <div class="cs">Porcentaje del PIB</div>
-        <div class="cw"><canvas id="c-inv"></canvas>
-      <div class="narr" id="narr-inv"><strong>Análisis</strong><span id="narr-inv-txt"></span></div></div>
+        <div class="cw"><canvas id="c-inv"></canvas></div>
+      <div class="narr" id="narr-inv"><strong>Análisis</strong><span id="narr-inv-txt"></span></div>
       </div>
     </div>
   </div>
@@ -323,14 +323,14 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
       <div class="card">
         <div class="ct">Ingresos Presupuestarios — Gobiernos Regionales</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-ging"></canvas>
-      <div class="narr" id="narr-gores_ing"><strong>Análisis</strong><span id="narr-gores_ing-txt"></span></div></div>
+        <div class="cw"><canvas id="c-ging"></canvas></div>
+      <div class="narr" id="narr-gores_ing"><strong>Análisis</strong><span id="narr-gores_ing-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Gastos Presupuestarios — Gobiernos Regionales</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-ggas"></canvas>
-      <div class="narr" id="narr-gores_gas"><strong>Análisis</strong><span id="narr-gores_gas-txt"></span></div></div>
+        <div class="cw"><canvas id="c-ggas"></canvas></div>
+      <div class="narr" id="narr-gores_gas"><strong>Análisis</strong><span id="narr-gores_gas-txt"></span></div>
       </div>
     </div>
   </div>
@@ -342,14 +342,14 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
       <div class="card">
         <div class="ct">Ingresos Presupuestarios — Sector Municipal</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-ming"></canvas>
-      <div class="narr" id="narr-mun_ing"><strong>Análisis</strong><span id="narr-mun_ing-txt"></span></div></div>
+        <div class="cw"><canvas id="c-ming"></canvas></div>
+      <div class="narr" id="narr-mun_ing"><strong>Análisis</strong><span id="narr-mun_ing-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Gastos Presupuestarios — Sector Municipal</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-mgas"></canvas>
-      <div class="narr" id="narr-mun_gas"><strong>Análisis</strong><span id="narr-mun_gas-txt"></span></div></div>
+        <div class="cw"><canvas id="c-mgas"></canvas></div>
+      <div class="narr" id="narr-mun_gas"><strong>Análisis</strong><span id="narr-mun_gas-txt"></span></div>
       </div>
     </div>
     <div class="card">
@@ -366,28 +366,28 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
       <div class="card">
         <div class="ct">Utilidades / Pérdidas — Empresas del Estado</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw" style="height:240px"><canvas id="c-emp"></canvas>
-      <div class="narr" id="narr-emp"><strong>Análisis</strong><span id="narr-emp-txt"></span></div></div>
+        <div class="cw" style="height:240px"><canvas id="c-emp"></canvas></div>
+      <div class="narr" id="narr-emp"><strong>Análisis</strong><span id="narr-emp-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Ingresos — Instituciones Educación Superior</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-edu"></canvas>
-      <div class="narr" id="narr-edu_ing"><strong>Análisis</strong><span id="narr-edu_ing-txt"></span></div></div>
+        <div class="cw"><canvas id="c-edu"></canvas></div>
+      <div class="narr" id="narr-edu_ing"><strong>Análisis</strong><span id="narr-edu_ing-txt"></span></div>
       </div>
     </div>
     <div class="g2">
       <div class="card">
         <div class="ct">Gastos — Instituciones Educación Superior</div>
         <div class="cs">Millones de pesos</div>
-        <div class="cw"><canvas id="c-edug"></canvas>
-      <div class="narr" id="narr-edu_gas"><strong>Análisis</strong><span id="narr-edu_gas-txt"></span></div></div>
+        <div class="cw"><canvas id="c-edug"></canvas></div>
+      <div class="narr" id="narr-edu_gas"><strong>Análisis</strong><span id="narr-edu_gas-txt"></span></div>
       </div>
       <div class="card">
         <div class="ct">Transferencias MINEDUC a Educación Superior · % Gratuidad</div>
         <div class="cs">Billones de pesos y porcentaje destinado a gratuidad</div>
-        <div class="cw"><canvas id="c-grat"></canvas>
-      <div class="narr" id="narr-grat"><strong>Análisis</strong><span id="narr-grat-txt"></span></div></div>
+        <div class="cw"><canvas id="c-grat"></canvas></div>
+      <div class="narr" id="narr-grat"><strong>Análisis</strong><span id="narr-grat-txt"></span></div>
       </div>
     </div>
   </div>
