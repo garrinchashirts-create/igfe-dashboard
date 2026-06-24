@@ -1256,12 +1256,18 @@ function buildHistoric(dbKey, unit, mode) {
 
   // Build tabs
   var tabsEl = document.getElementById('hist-tabs');
-  tabsEl.innerHTML = [
-    {id:'total', lbl:'Total (línea)'},
+  var tabDefs = [
+    {id:'total', lbl:'Total (l\u00ednea)'},
     {id:'components', lbl:'Por componente (barras)'}
-  ].map(function(t) {
-    return '<button class="hist-tab'+(mode===t.id?' active':'')+'" onclick="buildHistoric(''+dbKey+'',''+unit+'',''+t.id+'')">'+t.lbl+'</button>';
-  }).join('');
+  ];
+  tabsEl.innerHTML = '';
+  tabDefs.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'hist-tab' + (mode===t.id?' active':'');
+    btn.textContent = t.lbl;
+    btn.onclick = function() { buildHistoric(dbKey, unit, t.id); };
+    tabsEl.appendChild(btn);
+  });
 
   // Destroy old chart
   if (histChart) { histChart.destroy(); histChart = null; }
