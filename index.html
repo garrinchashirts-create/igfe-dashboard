@@ -599,67 +599,118 @@ function render(year, q) {
     ).join('') : '<div style="color:#aaa;font-size:11px">Sin datos disponibles</div>';
 
 
-  // Circles SVG diagram — PDF style with transfer arrows
+  // Circles SVG diagram — PDF style bidirectional arrows
   document.getElementById('circ-subtitle').textContent = 'Transferencias entre Sectores ' + year;
   var gs = d.gastoSector || {};
   var tr = TR[key] || {};
-  var W=900, H=400, r_sp=85, r_cod=70, r_ies=58, r_oth=70, r_mun=68;
-  var SP={x:450,y:200}, COD={x:175,y:125}, IES={x:185,y:305}, OTH={x:715,y:125}, MUN={x:720,y:305};
-  var cols={sp:'#1a2744',cod:'#9aa8bc',ies:'#d9caba',oth:'#e8336e',mun:'#00b4a0'};
-  var strok={sp:'#0f1a2e',cod:'#6a7a90',ies:'#b09a80',oth:'#b8004a',mun:'#008070'};
-  function fv(v) { return v!=null ? '$ '+parseFloat(v).toFixed(1)+' billones' : ''; }
-  function circSVG(p,r,fill,stroke,lines,val,light) {
-    var tc=light?'#1a2744':'white'; var fs1=r>80?'10':'9'; var fs2=r>80?'13':'11.5';
-    var lh=parseFloat(fs1)*1.3; var totalH=lines.length*lh;
-    var nameY=p.y-r*0.1-totalH/2+parseFloat(fs1)*0.5;
-    var nameSVG=lines.map(function(l,i){
-      return '<text x="'+p.x+'" y="'+(nameY+i*lh)+'" text-anchor="middle" font-family="Arial" font-size="'+fs1+'" font-weight="700" fill="'+tc+'">'+l+'</text>';
-    }).join('');
-    return '<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(r+8)+'" fill="'+fill+'" opacity="0.12"/>'+
-           '<circle cx="'+p.x+'" cy="'+p.y+'" r="'+r+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3.5"/>'+
-           nameSVG+
-           '<text x="'+p.x+'" y="'+(p.y+r*0.28)+'" text-anchor="middle" font-family="Arial" font-size="'+fs2+'" font-weight="800" fill="'+tc+'">'+val+'</text>';
-  }
-  function arrowLine(x1,y1,x2,y2,label,above) {
-    var mx=(x1+x2)/2, my=(y1+y2)/2;
-    var dy2 = above ? -10 : 12;
-    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#aaa" stroke-width="1.2" marker-end="url(#arr2)"/>'+
-           (label?'<text x="'+mx+'" y="'+(my+dy2)+'" text-anchor="middle" font-family="Arial" font-size="9" fill="#777">'+label+'</text>':'');
-  }
-  var spVal  = gs['Sector P\u00fablico'] ? fv(gs['Sector P\u00fablico']) : (tr.sp ? fv(tr.sp) : '--');
-  var codVal = tr.codelco ? fv(tr.codelco) : (gs['Empresas del Estado'] ? fv(gs['Empresas del Estado']) : '--');
-  var othVal = tr.otras ? fv(tr.otras) : (gs['Empresas del Estado'] ? fv(gs['Empresas del Estado']) : '--');
-  var munVal = gs['Sector Municipal'] ? fv(gs['Sector Municipal']) : (tr.municipal ? fv(tr.municipal) : '--');
-  var iesVal = gs['Instituciones de Educaci\u00f3n Superior'] ? fv(gs['Instituciones de Educaci\u00f3n Superior']) : (tr.ies ? fv(tr.ies) : '--');
-  // arrow endpoints (at circle edges)
-  var cod_r=COD.x+r_cod, ies_r=IES.x+r_ies, sp_l=SP.x-r_sp, sp_r=SP.x+r_sp;
-  var oth_l=OTH.x-r_oth, mun_l=MUN.x-r_mun, sp_t=SP.y-r_sp, sp_b=SP.y+r_sp;
-  var svgCirc =
-    '<svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">'+
-    '<defs><marker id="arr2" markerWidth="7" markerHeight="7" refX="4" refY="3.5" orient="auto">'+
-    '<path d="M0,0 L7,3.5 L0,7 Z" fill="#aaa"/></marker></defs>'+
-    // COD <-> SP arrows
-    (tr.codelcoToSP?arrowLine(cod_r,COD.y-12,sp_l,SP.y-20, '$ '+parseFloat(tr.codelcoToSP).toFixed(1)+' billones',true):'')+
-    (tr.spToCodelco?arrowLine(sp_l,SP.y+15,cod_r,COD.y+12, '$ '+parseFloat(tr.spToCodelco).toFixed(1)+' billones',false):'')+
-    // OTH <-> SP arrows
-    (tr.otrasToSP?arrowLine(oth_l,OTH.y-12,sp_r,SP.y-20, '$ '+parseFloat(tr.otrasToSP).toFixed(1)+' billones',true):'')+
-    (tr.spToOtras?arrowLine(sp_r,SP.y+15,oth_l,OTH.y+12, '$ '+parseFloat(tr.spToOtras).toFixed(1)+' billones',false):'')+
-    // MUN <-> SP arrows
-    (tr.spToMun?arrowLine(sp_r,SP.y+20,mun_l,MUN.y-15, '$ '+parseFloat(tr.spToMun).toFixed(1)+' billones',false):'')+
-    (tr.munToSP?arrowLine(mun_l,MUN.y+10,sp_r,SP.y+30, '$ '+parseFloat(tr.munToSP).toFixed(1)+' billones',true):'')+
-    // IES <-> SP arrows
-    (tr.spToIES?arrowLine(sp_l,SP.y+20,ies_r,IES.y-10, '$ '+parseFloat(tr.spToIES).toFixed(1)+' billones',false):'')+
-    // ZOFRI note
-    (tr.zofri?'<text x="'+(OTH.x)+'" y="'+(OTH.y+r_oth+24)+'" text-anchor="middle" font-family="Arial" font-size="9" fill="#777">\u2193 $ '+parseFloat(tr.zofri).toFixed(1)+' miles de millones (ZOFRI)</text>':'')+
-    // circles on top
-    circSVG(COD,r_cod,cols.cod,strok.cod,['CODELCO'],codVal,true)+
-    circSVG(IES,r_ies,cols.ies,strok.ies,['INSTITUCIONES DE','EDUC. SUPERIOR','DEL ESTADO'],iesVal,true)+
-    circSVG(SP,r_sp,cols.sp,strok.sp,['SECTOR P\u00daBLICO','(GOBIERNO CENTRAL)'],spVal,false)+
-    circSVG(OTH,r_oth,cols.oth,strok.oth,['OTRAS EMPRESAS','DEL ESTADO'],othVal,false)+
-    circSVG(MUN,r_mun,cols.mun,strok.mun,['SECTOR MUNICIPAL'],munVal,false)+
-    '</svg>';
-  document.getElementById('circles-svg').innerHTML = svgCirc;
 
+  // Geometry
+  var SP ={x:450,y:200}, COD={x:168,y:118}, IES={x:172,y:308}, OTH={x:728,y:118}, MUN={x:724,y:308};
+  var R ={sp:88,  cod:72,  ies:60,  oth:72,  mun:70};
+  var COLS ={sp:'#1a2744',cod:'#9aa8bc',ies:'#d9caba',oth:'#e8336e',mun:'#00b4a0'};
+  var STRK ={sp:'#0f1a2e',cod:'#6a7a90',ies:'#b09a80',oth:'#b8004a',mun:'#008070'};
+
+  function fv(v){ return v!=null?'$ '+parseFloat(v).toFixed(1)+' bill.':''; }
+
+  // Draw circle with outer halo
+  function circ(p,r,fill,stroke,lines,val,light){
+    var tc=light?'#1a2744':'white';
+    var fs1=r>80?'10':'9', fs2=r>80?'13':'11.5', lh=parseFloat(fs1)*1.3;
+    var ny=p.y - lines.length*lh/2 + parseFloat(fs1)*0.4;
+    var t=lines.map(function(l,i){
+      return '<text x="'+p.x+'" y="'+(ny+i*lh)+'" text-anchor="middle" font-family="Arial" font-size="'+fs1+'" font-weight="700" fill="'+tc+'">'+l+'</text>';
+    }).join('');
+    return '<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(r+10)+'" fill="'+fill+'" opacity="0.10"/>'+
+           '<circle cx="'+p.x+'" cy="'+p.y+'" r="'+r+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3.5"/>'+
+           t+
+           '<text x="'+p.x+'" y="'+(p.y+r*0.30)+'" text-anchor="middle" font-family="Arial" font-size="'+fs2+'" font-weight="800" fill="'+tc+'">'+val+'</text>';
+  }
+
+  // Bidirectional arrow pair between two circle edges
+  // Draws two parallel lines with arrows going in opposite directions
+  // offset: pixels to offset each line perpendicularly
+  function biArrow(x1,y1,x2,y2, labelTo, labelFrom){
+    var dx=x2-x1, dy=y2-y1, len=Math.sqrt(dx*dx+dy*dy);
+    var nx=dx/len, ny=dy/len;   // unit vector along
+    var px=-ny,   py=nx;         // perpendicular unit vector
+    var off=5;                   // parallel offset in pixels
+    // Line 1: from -> to (offset up/left)
+    var ax1=x1+px*off, ay1=y1+py*off, ax2=x2+px*off, ay2=y2+py*off;
+    // Line 2: to -> from (offset down/right)
+    var bx1=x2-px*off, by1=y2-py*off, bx2=x1-px*off, by2=y1-py*off;
+    // Label midpoints, pushed perpendicular
+    var push=11;
+    var lm1x=(ax1+ax2)/2+px*push, lm1y=(ay1+ay2)/2+py*push;
+    var lm2x=(bx1+bx2)/2-px*push, lm2y=(by1+by2)/2-py*push;
+    var svg='';
+    if(labelTo){
+      svg+='<line x1="'+ax1+'" y1="'+ay1+'" x2="'+ax2+'" y2="'+ay2+'" stroke="#999" stroke-width="1.2" marker-end="url(#arr2)"/>';
+      svg+='<text x="'+lm1x+'" y="'+lm1y+'" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="9" fill="#666">'+labelTo+'</text>';
+    }
+    if(labelFrom){
+      svg+='<line x1="'+bx1+'" y1="'+by1+'" x2="'+bx2+'" y2="'+by2+'" stroke="#999" stroke-width="1.2" marker-end="url(#arr2)"/>';
+      svg+='<text x="'+lm2x+'" y="'+lm2y+'" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="9" fill="#666">'+labelFrom+'</text>';
+    }
+    return svg;
+  }
+
+  // Edge points between circles
+  function edge(from,rFrom,to){
+    var dx=to.x-from.x, dy=to.y-from.y, d=Math.sqrt(dx*dx+dy*dy);
+    return {x:from.x+dx/d*rFrom, y:from.y+dy/d*rFrom,
+            tx:to.x-dx/d, ty:to.y-dy/d};
+  }
+
+  var spVal  = gs['Sector P\u00fablico']               ? fv(gs['Sector P\u00fablico'])               : (tr.sp        ? fv(tr.sp)        : '--');
+  var codVal = tr.codelco                               ? fv(tr.codelco)                               : fv(gs['Empresas del Estado']) || '--';
+  var othVal = tr.otras                                 ? fv(tr.otras)                                 : fv(gs['Empresas del Estado']) || '--';
+  var munVal = gs['Sector Municipal']                   ? fv(gs['Sector Municipal'])                   : (tr.municipal ? fv(tr.municipal) : '--');
+  var iesVal = gs['Instituciones de Educaci\u00f3n Superior'] ? fv(gs['Instituciones de Educaci\u00f3n Superior']) : (tr.ies ? fv(tr.ies) : '--');
+
+  // Compute edge points
+  var eCOD = edge(COD,R.cod,SP), eIES = edge(IES,R.ies,SP);
+  var eOTH = edge(OTH,R.oth,SP), eMUN = edge(MUN,R.mun,SP);
+
+  var svgCirc =
+    '<svg viewBox="0 0 900 430" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs>'+
+      '<marker id="arr2" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">'+
+        '<path d="M0,0 L7,3.5 L0,7 Z" fill="#999"/>'+
+      '</marker>'+
+    '</defs>'+
+
+    // COD <-> SP
+    biArrow(eCOD.x, eCOD.y, SP.x-R.sp, SP.y-18,
+      tr.codelcoToSP ? '$ '+parseFloat(tr.codelcoToSP).toFixed(1)+' bill.' : null,
+      tr.spToCodelco ? '$ '+parseFloat(tr.spToCodelco).toFixed(1)+' bill.' : null)+
+
+    // OTH <-> SP
+    biArrow(eOTH.x, eOTH.y, SP.x+R.sp, SP.y-18,
+      tr.otrasToSP   ? '$ '+parseFloat(tr.otrasToSP).toFixed(1)+' bill.' : null,
+      tr.spToOtras   ? '$ '+parseFloat(tr.spToOtras).toFixed(1)+' bill.' : null)+
+
+    // MUN <-> SP
+    biArrow(eMUN.x, eMUN.y, SP.x+R.sp, SP.y+22,
+      tr.munToSP     ? '$ '+parseFloat(tr.munToSP).toFixed(1)+' bill.' : null,
+      tr.spToMun     ? '$ '+parseFloat(tr.spToMun).toFixed(1)+' bill.' : null)+
+
+    // IES <-> SP
+    biArrow(eIES.x, eIES.y, SP.x-R.sp, SP.y+22,
+      null,
+      tr.spToIES     ? '$ '+parseFloat(tr.spToIES).toFixed(1)+' bill.' : null)+
+
+    // ZOFRI note below OTH
+    (tr.zofri ? '<text x="'+OTH.x+'" y="'+(OTH.y+R.oth+22)+'" text-anchor="middle" font-family="Arial" font-size="9" fill="#888">\u2193 $ '+parseFloat(tr.zofri).toFixed(1)+' miles de millones (ZOFRI)</text>' : '')+
+
+    // Circles drawn last (on top of arrows)
+    circ(COD, R.cod, COLS.cod, STRK.cod, ['CODELCO'],                          codVal, true )+
+    circ(IES, R.ies, COLS.ies, STRK.ies, ['INSTITUCIONES DE','EDUC. SUPERIOR','DEL ESTADO'], iesVal, true )+
+    circ(SP,  R.sp,  COLS.sp,  STRK.sp,  ['SECTOR P\u00daBLICO','(GOBIERNO CENTRAL)'],      spVal,  false)+
+    circ(OTH, R.oth, COLS.oth, STRK.oth, ['OTRAS EMPRESAS','DEL ESTADO'],      othVal, false)+
+    circ(MUN, R.mun, COLS.mun, STRK.mun, ['SECTOR MUNICIPAL'],                 munVal, false)+
+    '</svg>';
+
+  document.getElementById('circles-svg').innerHTML = svgCirc;
 
 
   // Chart: Gastos sector
