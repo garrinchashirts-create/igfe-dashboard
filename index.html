@@ -30,6 +30,11 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .upd-btn:hover{background:rgba(255,255,255,.2)}
 .ct-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px}
 .ct-row .ct{margin-bottom:0;flex:1}
+.exp-bar{display:flex;gap:8px;margin-left:auto;align-items:center}
+.exp-btn{font-size:10px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:inherit;border:none;display:flex;align-items:center;gap:5px;transition:opacity .15s}
+.exp-btn:hover{opacity:.85}
+.exp-btn-xl{background:#1D6F42;color:#fff}
+.exp-btn-pdf{background:#e8336e;color:#fff}
 .hist-btn{font-size:10px;font-weight:600;color:var(--teal);background:rgba(0,180,160,.08);border:1px solid rgba(0,180,160,.3);border-radius:6px;padding:3px 9px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s}
 .hist-btn:hover{background:rgba(0,180,160,.18)}
 .hist-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,44,.75);z-index:200;align-items:center;justify-content:center}
@@ -173,6 +178,14 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
 @media(max-width:600px){
   .kpis{grid-template-columns:repeat(2,1fr)}
 }
+
+@media print {
+  .period-banner, .notice, .exp-bar, .hist-btn, .hist-overlay, .cover { display: none !important; }
+  body { background: white !important; }
+  .card { break-inside: avoid; border: 0.5px solid #ddd !important; }
+  .sec { break-before: auto; }
+  canvas { max-width: 100% !important; }
+}
 </style>
 </head>
 <body>
@@ -212,6 +225,10 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
     <div class="pb-divider"></div>
     <span class="pb-tag" id="cover-title-period">—</span>
     <span class="pb-txt" id="cover-sub2">—</span>
+    <div class="exp-bar">
+      <button class="exp-btn exp-btn-xl" onclick="exportExcel()">⬇ Excel</button>
+      <button class="exp-btn exp-btn-pdf" onclick="exportPDF()">⬇ PDF</button>
+    </div>
   </div>
 </div>
 
@@ -432,6 +449,7 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* ====================================================
    DATA — from Bases_tablero_IGFE.xlsx
@@ -1393,6 +1411,145 @@ document.addEventListener('click', function(e) {
   if (!btn) return;
   showHistoric(btn.dataset.chart, btn.dataset.label, btn.dataset.key, btn.dataset.unit);
 });
+
+
+/* =====================================================
+   EXPORT FUNCTIONS
+   ===================================================== */
+
+function exportExcel() {
+  var key = document.getElementById('sel-y').value + '-' + document.getElementById('sel-q').value;
+  var d = DB[key];
+  var per = document.getElementById('cover-title-period').textContent || key;
+  if (!d) { alert('Sin datos para este período'); return; }
+
+  var wb = XLSX.utils.book_new();
+  var tr = TR[key] || {};
+  var ej = EJEC_MAP[key] || {};
+  var cb = COB_MAP[key] || {};
+
+  /* ── Hoja 1: Resumen ── */
+  var gs = d.gastoSector || {};
+  var deu = d.deuda || {};
+  var resumen = [
+    ['IGFE — Informe de Gestión Financiera del Estado'],
+    ['Período:', per],
+    ['Generado:', new Date().toLocaleDateString('es-CL')],
+    [],
+    ['GASTO POR SECTOR (B$)'],
+    ['Sector','Gasto Ejecutado (B$)','Cumpl. Envío (%)','Cumpl. Ejecución (%)','N° Entidades'],
+  ];
+  var sectors = ['Sector Público','Sector Municipal','Empresas del Estado','Instituciones de Educación Superior'];
+  var ejKeys  = ['pub','mun','emp','ies'];
+  var cobKeys = ['pub','mun','emp','ies'];
+  sectors.forEach(function(s,i) {
+    var c = d.cumplimiento || {};
+    resumen.push([s, gs[s]||null, c[s]||null, ej[ejKeys[i]]||null, cb[cobKeys[i]]||null]);
+  });
+  resumen.push([]);
+  resumen.push(['DEUDA PÚBLICA (% PIB)']);
+  resumen.push(['Deuda Interna','Deuda Externa','Total','Inversiones/PIB']);
+  resumen.push([deu.interna||null, deu.externa||null, deu.total||null, d.inversiones||null]);
+  resumen.push([]);
+  resumen.push(['TRANSFERENCIAS ENTRE SECTORES (B$)']);
+  resumen.push(['Sector','Gasto Total','Transf. hacia SP','Transf. desde SP']);
+  [['CODELCO','codelco','codelcoToSP','spToCodelco'],
+   ['Otras Empresas','otras','otrasToSP','spToOtras'],
+   ['Municipal','municipal','munToSP','spToMun'],
+   ['IES','ies',null,'spToIES']].forEach(function(r) {
+    resumen.push([r[0], tr[r[1]]||null, r[2]?tr[r[2]]:null, tr[r[3]]||null]);
+  });
+
+  var ws1 = XLSX.utils.aoa_to_sheet(resumen);
+  ws1['!cols'] = [{wch:42},{wch:22},{wch:18},{wch:22},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
+
+  /* ── Hoja 2: Ingresos SP ── */
+  var ispL = ['Impuestos','Endeudamiento','Otros Corrientes','Vta. Activos','Imposiciones Prev.','Recuperación','Otros'];
+  var isp  = d.ingresosSP || [];
+  var gspL = ['Transferencias','Servicio Deuda','Personal','Seg. Social','Act. Financieras','Bs. y Servicios','Otros Gastos','Inversión'];
+  var gsp  = d.gastosSP || [];
+  var spData = [['SECTOR PÚBLICO — Ingresos y Gastos (B$)'],['Tipo','Componente','Monto (B$)']];
+  ispL.forEach(function(l,i){ spData.push(['Ingreso', l, isp[i]||null]); });
+  gspL.forEach(function(l,i){ spData.push(['Gasto',   l, gsp[i]||null]); });
+  var ws2 = XLSX.utils.aoa_to_sheet(spData);
+  ws2['!cols'] = [{wch:12},{wch:28},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Sector Público');
+
+  /* ── Hoja 3: Municipal ── */
+  var mIngL = ['Ing. Propios','Transf. MINSAL','Transf. MINEDUC','FCM','Otros Ing.','Ing. a Percibir','Bfo. FCM'];
+  var mGasL = ['Personal','Transf. Corrientes','Bs. y Servicios','Ini. Inversión','Serv. Deuda','Prest. SS','Adq. Act. NF','Otros'];
+  var mIng  = d.munIng || []; var mGas = d.munGas || [];
+  var munData = [['SECTOR MUNICIPAL (M$)'],['Tipo','Componente','Monto (M$)']];
+  mIngL.forEach(function(l,i){ munData.push(['Ingreso',l,mIng[i]||null]); });
+  mGasL.forEach(function(l,i){ munData.push(['Gasto',  l,mGas[i]||null]); });
+  var ws3 = XLSX.utils.aoa_to_sheet(munData);
+  ws3['!cols'] = [{wch:12},{wch:28},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'Municipal');
+
+  /* ── Hoja 4: FCM por Región ── */
+  var fcm = d.fcmReg || {};
+  var fcmData = [['FCM — Participación en Ingresos Totales (%)'],['Región','FCM %','Promedio Nacional %']];
+  var avg = d.fcmAvg;
+  var regs = Object.keys(fcm).sort(function(a,b){ return (fcm[b]||0)-(fcm[a]||0); });
+  regs.forEach(function(r){ fcmData.push([r, fcm[r], avg||null]); });
+  if(!regs.length) fcmData.push(['(Sin datos por región)', null, avg||null]);
+  var ws4 = XLSX.utils.aoa_to_sheet(fcmData);
+  ws4['!cols'] = [{wch:28},{wch:12},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, ws4, 'FCM por Región');
+
+  /* ── Hoja 5: Rankings ── */
+  var may = d.rankingMay || []; var men = d.rankingMen || [];
+  var rankData = [['RANKING EJECUCIÓN PRESUPUESTARIA'],
+    ['Posición','Tipo','Ministerio / Partida','Ejecución %']];
+  may.forEach(function(r,i){ rankData.push([i+1,'Mayor Ejecución',r.name,r.pct]); });
+  men.forEach(function(r,i){ rankData.push([i+1,'Menor Ejecución',r.name,r.pct]); });
+  var ws5 = XLSX.utils.aoa_to_sheet(rankData);
+  ws5['!cols'] = [{wch:10},{wch:18},{wch:44},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws5, 'Rankings');
+
+  /* ── Hoja 6: Empresas e IES ── */
+  var empL = ['Otras Emp.','TVN','BancoEstado','CODELCO','ENAP','Emp. Portuarias','Emp. Defensa','ENAMI','EFE','METRO'];
+  var emp  = d.empresas || [];
+  var grat = d.grat || {};
+  var empData = [['EMPRESAS DEL ESTADO — Utilidades (MM$)'],['Empresa','Utilidades (MM$)']];
+  empL.forEach(function(l,i){ empData.push([l, emp[i]||null]); });
+  empData.push([]); empData.push(['EDUCACIÓN SUPERIOR']);
+  empData.push(['Concepto','Valor']);
+  empData.push(['Gratuidad (B$)', grat.g||null]);
+  empData.push(['Total Transferencia (B$)', grat.t||null]);
+  empData.push(['% Gratuidad', grat.p||null]);
+  var ws6 = XLSX.utils.aoa_to_sheet(empData);
+  ws6['!cols'] = [{wch:30},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, ws6, 'Empresas e IES');
+
+  /* Download */
+  var fname = 'IGFE_' + key.replace('-','_') + '_' + new Date().toISOString().slice(0,10) + '.xlsx';
+  XLSX.writeFile(wb, fname);
+}
+
+/* ── PDF Export ── */
+function exportPDF() {
+  var per = document.getElementById('cover-title-period').textContent || '';
+  var origTitle = document.title;
+  document.title = 'IGFE_' + per.replace(/\s+/g,'_');
+
+  /* Hide export buttons and hist buttons temporarily */
+  var expBar = document.querySelector('.exp-bar');
+  var histBtns = document.querySelectorAll('.hist-btn');
+  if(expBar) expBar.style.display = 'none';
+  histBtns.forEach(function(b){ b.style.display='none'; });
+
+  /* Print dialog = PDF in modern browsers */
+  window.print();
+
+  /* Restore */
+  setTimeout(function(){
+    if(expBar) expBar.style.display = '';
+    histBtns.forEach(function(b){ b.style.display=''; });
+    document.title = origTitle;
+  }, 1000);
+}
 
 window.addEventListener('DOMContentLoaded', function() {
   initSelectors();
