@@ -583,7 +583,7 @@ function render(year, q) {
 
   const qi = parseInt(q);
   const period = PPERIOD[qi] + ' ' + year;
-  const shortPer = 'T' + qi + ' ' + year;
+  const shortPer = PFULL[qi].replace('{y}', year).split(' · ')[0].replace('Al ','');
   document.getElementById('cover-title-period').textContent = shortPer;
   document.getElementById('cover-sub2').textContent = PFULL[qi].replace('{y}', year);
   /* pbadge moved to pb-tag */
