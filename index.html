@@ -1340,6 +1340,11 @@ function getCompLabels(dbKey) {
 }
 
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeHistoric(); });
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.hist-btn');
+  if (!btn) return;
+  showHistoric(btn.dataset.chart, btn.dataset.label, btn.dataset.key, btn.dataset.unit);
+});
 
 window.addEventListener('DOMContentLoaded', function() {
   initSelectors();
