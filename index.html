@@ -1239,14 +1239,16 @@ function buildHistoric(dbKey, unit, mode) {
 
   if (mode === 'total') {
     chartLabels = periods.map(function(k){ var p=k.split('-'); return 'T'+p[1]+' '+p[0]; });
+    var lineData = periods.map(getVal);
     datasets.push({
       label: 'Total',
-      data: periods.map(getVal),
+      data: lineData,
       borderColor: '#00b4a0',
       backgroundColor: 'rgba(0,180,160,.1)',
       tension: 0.3, fill: true,
       pointRadius: 6, pointBackgroundColor: '#00b4a0',
-      pointHoverRadius: 8, borderWidth: 2.5
+      pointHoverRadius: 8, borderWidth: 2.5,
+      spanGaps: true
     });
 
   } else if (mode === 'components') {
@@ -1301,6 +1303,10 @@ function buildHistoric(dbKey, unit, mode) {
     {id:'annual',     lbl:'\u25a6\u2009Comparativo por a\u00f1o'}
   ];
   tabsEl.innerHTML = '';
+  // Note about periods with no data
+  var missingP = periods.filter(p => getVal(p) === null);
+  var noteEl = document.getElementById('hist-note');
+  if(noteEl) noteEl.textContent = missingP.length ? 'Períodos sin datos: ' + missingP.map(p=>{var s=p.split('-'); return 'T'+s[1]+' '+s[0];}).join(', ') : '';
   tabDefs.forEach(function(t) {
     var btn = document.createElement('button');
     btn.className = 'hist-tab' + (mode===t.id?' active':'');
@@ -1335,7 +1341,13 @@ function buildHistoric(dbKey, unit, mode) {
         }
       },
       scales: {
-        x: { grid:{color:'#f0f2f5'}, ticks:{font:{size:10}, maxRotation:0} },
+        x: { grid:{color:'#f0f2f5'}, ticks:{font:{size:10}, maxRotation:0,
+          color: function(ctx) {
+            // Grey out periods with no data
+            var p = periods[ctx.index];
+            return (p && getVal(p) === null) ? '#ccc' : '#555';
+          }
+        }},
         y: { grid:{color:'#f0f2f5'},
              ticks:{font:{size:10}, callback:function(v){
                return v.toLocaleString('es-CL',{maximumFractionDigits:1})+'\u00a0'+unit;
@@ -1385,7 +1397,7 @@ window.addEventListener('DOMContentLoaded', function() {
       <span class="hist-title" id="hist-title">Serie Histórica</span>
       <button class="hist-close" onclick="closeHistoric()">✕</button>
     </div>
-    <div class="hist-body">
+    <div class="hist-body"><div id="hist-note" style="font-size:10px;color:#aaa;margin-bottom:6px;text-align:right"></div>
       <div class="hist-tabs" id="hist-tabs"></div>
       <div class="hist-cw"><canvas id="hist-canvas"></canvas></div>
     </div>
