@@ -1139,10 +1139,22 @@ function render(year, q) {
       '<div class="debt-i"><div class="debt-l">Deuda total</div><div class="debt-v" style="color:var(--pink)">' + (deu.total||'—') + '%</div><div class="debt-p">del PIB</div></div>' +
       '<div class="debt-i"><div class="debt-l">Deuda interna</div><div class="debt-v" style="color:var(--gold)">' + (deu.interna||'—') + '%</div><div class="debt-p">del PIB</div></div>' +
       '<div class="debt-i"><div class="debt-l">Deuda externa</div><div class="debt-v" style="color:var(--blue)">' + (deu.externa||'—') + '%</div><div class="debt-p">del PIB</div></div>';
-    bar('c-deuda', deuL, [
-      ds('Total/PIB', deuKeys.map(k => DB[k].deuda && DB[k].deuda.total), 'rgba(232,51,110,.8)', '#e8336e'),
-      ds('Interna/PIB', deuKeys.map(k => DB[k].deuda && DB[k].deuda.interna), 'rgba(240,165,0,.65)', CG),
-      ds('Externa/PIB', deuKeys.map(k => DB[k].deuda && DB[k].deuda.externa), 'rgba(46,95,163,.5)', C1)
+    mkChart('c-deuda', 'bar', deuL, [
+      ds('Interna/PIB', deuKeys.map(k => DB[k].deuda && DB[k].deuda.interna), 'rgba(240,165,0,.7)', CG),
+      ds('Externa/PIB', deuKeys.map(k => DB[k].deuda && DB[k].deuda.externa), 'rgba(46,95,163,.6)', C1),
+      {
+        label: 'Total/PIB',
+        data: deuKeys.map(k => DB[k].deuda && DB[k].deuda.total),
+        type: 'line',
+        borderColor: '#e8336e',
+        backgroundColor: 'rgba(232,51,110,.1)',
+        borderWidth: 2.5,
+        pointRadius: 5,
+        pointBackgroundColor: '#e8336e',
+        tension: 0.3,
+        yAxisID: 'y',
+        order: 0
+      }
     ], {fmt: v => v+'%', ytick: v => v+'%'});
   }
 
