@@ -35,6 +35,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .exp-btn:hover{opacity:.85}
 .exp-btn-xl{background:#1D6F42;color:#fff}
 .exp-btn-pdf{background:#e8336e;color:#fff}
+.exp-btn-db{background:#2e5fa3;color:#fff}
 .hist-btn{font-size:10px;font-weight:600;color:var(--teal);background:rgba(0,180,160,.08);border:1px solid rgba(0,180,160,.3);border-radius:6px;padding:3px 9px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s}
 .hist-btn:hover{background:rgba(0,180,160,.18)}
 .hist-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,44,.75);z-index:200;align-items:center;justify-content:center}
@@ -294,6 +295,7 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
     <span class="pb-txt" id="cover-sub2">—</span>
     <div class="exp-bar">
       <button class="exp-btn exp-btn-xl" onclick="exportExcel()">⬇ Excel</button>
+      <button class="exp-btn exp-btn-db" onclick="exportDB()">⬇ Histórico BD</button>
       <button class="exp-btn exp-btn-pdf" onclick="exportPDF()">⬇ PDF</button>
     </div>
   </div>
@@ -1592,6 +1594,166 @@ function exportExcel() {
 
   /* Download */
   var fname = 'IGFE_' + key.replace('-','_') + '_' + new Date().toISOString().slice(0,10) + '.xlsx';
+  XLSX.writeFile(wb, fname);
+}
+
+/* ── Historical Database Export ── */
+function exportDB() {
+  var wb = XLSX.utils.book_new();
+  var periods = Object.keys(DB).sort();
+  var QNAME = {'1':'1er Trimestre','2':'2do Trimestre','3':'3er Trimestre','4':'4to Trimestre'};
+
+  function pLabel(p){ var s=p.split('-'); return QNAME[s[1]]+' '+s[0]; }
+  function n(v){ return v!=null ? v : ''; }
+
+  /* ══ 1. DIM_PERIODO ══ */
+  var dim = [['PeriodoID','Año','Trimestre','NombreCompleto','Trimestre_Texto','Orden']];
+  periods.forEach(function(p,i){
+    var s=p.split('-');
+    dim.push([p, +s[0], +s[1], pLabel(p), QNAME[s[1]], i+1]);
+  });
+  var wsDim = XLSX.utils.aoa_to_sheet(dim);
+  wsDim['!cols']=[{wch:12},{wch:6},{wch:10},{wch:26},{wch:18},{wch:7}];
+  XLSX.utils.book_append_sheet(wb, wsDim, 'DIM_PERIODO');
+
+  /* ══ 2. HECHOS_GASTO_SECTOR ══ */
+  var SECTORS = ['Sector Público','Sector Municipal','Empresas del Estado','Instituciones de Educación Superior'];
+  var EJEC_K  = ['pub','mun','emp','ies'];
+  var COB_K   = ['pub','mun','emp','ies'];
+  var gsHdr = ['PeriodoID','Año','Trimestre','Sector','GastoEjecutado_B$','CumplimientoEnvio_%','CumplimientoEjecucion_%','CoberturaNEntidades'];
+  var gsData = [gsHdr];
+  periods.forEach(function(p){
+    var s=p.split('-'); var d=DB[p];
+    var gs=d.gastoSector||{}; var c=d.cumplimiento||{};
+    var ej=EJEC_MAP[p]||{}; var cb=COB_MAP[p]||{};
+    SECTORS.forEach(function(sec,i){
+      gsData.push([p,+s[0],+s[1],sec,n(gs[sec]),n(c[sec]),n(ej[EJEC_K[i]]),n(cb[COB_K[i]])]);
+    });
+  });
+  var wsGs = XLSX.utils.aoa_to_sheet(gsData);
+  wsGs['!cols']=[{wch:12},{wch:6},{wch:10},{wch:42},{wch:18},{wch:18},{wch:22},{wch:18}];
+  XLSX.utils.book_append_sheet(wb, wsGs, 'HECHOS_GASTO_SECTOR');
+
+  /* ══ 3. HECHOS_SECTOR_PUBLICO ══ */
+  var ISP_L=['Impuestos','Endeudamiento','Otros Corrientes','Vta. Activos','Imposiciones Prev.','Recuperación','Otros'];
+  var GSP_L=['Transferencias','Servicio Deuda','Personal','Seg. Social','Act. Financieras','Bs. y Servicios','Otros Gastos','Inversión'];
+  var spData=[['PeriodoID','Año','Trimestre','Tipo','Componente','Monto_B$']];
+  periods.forEach(function(p){
+    var s=p.split('-'); var d=DB[p];
+    var isp=d.ingresosSP||[]; var gsp=d.gastosSP||[];
+    ISP_L.forEach(function(l,i){ spData.push([p,+s[0],+s[1],'Ingreso',l,n(isp[i])]); });
+    GSP_L.forEach(function(l,i){ spData.push([p,+s[0],+s[1],'Gasto',  l,n(gsp[i])]); });
+  });
+  var wsSP = XLSX.utils.aoa_to_sheet(spData);
+  wsSP['!cols']=[{wch:12},{wch:6},{wch:10},{wch:10},{wch:28},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsSP, 'HECHOS_SECTOR_PUBLICO');
+
+  /* ══ 4. HECHOS_DEUDA_INVERSIONES ══ */
+  var deuData=[['PeriodoID','Año','Trimestre','DeudaInterna_%PIB','DeudaExterna_%PIB','DeudaTotal_%PIB','Inversiones_%PIB']];
+  periods.forEach(function(p){
+    var s=p.split('-'); var d=DB[p]; var deu=d.deuda||{};
+    deuData.push([p,+s[0],+s[1],n(deu.interna),n(deu.externa),n(deu.total),n(d.inversiones)]);
+  });
+  var wsDeu = XLSX.utils.aoa_to_sheet(deuData);
+  wsDeu['!cols']=[{wch:12},{wch:6},{wch:10},{wch:16},{wch:16},{wch:14},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, wsDeu, 'HECHOS_DEUDA_INVERSIONES');
+
+  /* ══ 5. HECHOS_TRANSFERENCIAS ══ */
+  var trData=[['PeriodoID','Año','Trimestre','Sector','Gasto_B$','TransfHaciaSP_B$','TransfDesdeSP_B$','ZOFRI_MilesMill']];
+  var TR_ROWS=[
+    ['CODELCO','codelco','codelcoToSP','spToCodelco'],
+    ['Otras Empresas del Estado','otras','otrasToSP','spToOtras'],
+    ['Sector Municipal','municipal','munToSP','spToMun'],
+    ['Instituciones Ed. Superior','ies',null,'spToIES'],
+  ];
+  periods.forEach(function(p){
+    var s=p.split('-'); var tr=TR[p]||{};
+    TR_ROWS.forEach(function(r){
+      trData.push([p,+s[0],+s[1],r[0],n(tr[r[1]]),r[2]?n(tr[r[2]]):null,n(tr[r[3]]),
+        r[0]==='CODELCO'?n(tr.zofri):null]);
+    });
+  });
+  var wsTr = XLSX.utils.aoa_to_sheet(trData);
+  wsTr['!cols']=[{wch:12},{wch:6},{wch:10},{wch:32},{wch:12},{wch:18},{wch:18},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, wsTr, 'HECHOS_TRANSFERENCIAS');
+
+  /* ══ 6. HECHOS_GOB_REGIONALES ══ */
+  var GI_L=['Transf. Capital','Transf. Corrientes','Otros'];
+  var GG_L=['Ini. Inversión','Transf. Capital','Adq. Act. NF','Personal','Transf. Corrientes','Serv. Deuda','Otros'];
+  var gobData=[['PeriodoID','Año','Trimestre','Tipo','Componente','Monto_MM$']];
+  periods.forEach(function(p){
+    var s=p.split('-'); var d=DB[p];
+    var gi=d.gobIng||[]; var gg=d.gobGas||[];
+    GI_L.forEach(function(l,i){ gobData.push([p,+s[0],+s[1],'Ingreso',l,n(gi[i])]); });
+    GG_L.forEach(function(l,i){ gobData.push([p,+s[0],+s[1],'Gasto',  l,n(gg[i])]); });
+  });
+  var wsGob = XLSX.utils.aoa_to_sheet(gobData);
+  wsGob['!cols']=[{wch:12},{wch:6},{wch:10},{wch:10},{wch:24},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsGob, 'HECHOS_GOB_REGIONALES');
+
+  /* ══ 7. HECHOS_MUNICIPAL ══ */
+  var MI_L=['Ing. Propios','Transf. MINSAL','Transf. MINEDUC','FCM','Otros Ing.','Ing. a Percibir','Bfo. FCM'];
+  var MG_L=['Personal','Transf. Corrientes','Bs. y Servicios','Ini. Inversión','Serv. Deuda','Prest. SS','Adq. Act. NF','Otros'];
+  var munData=[['PeriodoID','Año','Trimestre','Tipo','Componente','Monto_M$']];
+  periods.forEach(function(p){
+    var s=p.split('-'); var d=DB[p];
+    var mi=d.munIng||[]; var mg=d.munGas||[];
+    MI_L.forEach(function(l,i){ munData.push([p,+s[0],+s[1],'Ingreso',l,n(mi[i])]); });
+    MG_L.forEach(function(l,i){ munData.push([p,+s[0],+s[1],'Gasto',  l,n(mg[i])]); });
+  });
+  var wsMun = XLSX.utils.aoa_to_sheet(munData);
+  wsMun['!cols']=[{wch:12},{wch:6},{wch:10},{wch:10},{wch:24},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsMun, 'HECHOS_MUNICIPAL');
+
+  /* ══ 8. HECHOS_FCM_REGION ══ */
+  var fcmData=[['PeriodoID','Año','Trimestre','Region','FCM_%IngrTotales','PromedioNacional_%']];
+  periods.forEach(function(p){
+    var s=p.split('-'); var d=DB[p];
+    var fcm=d.fcmReg||{}; var avg=d.fcmAvg;
+    var regs=Object.keys(fcm).sort(function(a,b){return (fcm[b]||0)-(fcm[a]||0);});
+    if(regs.length){
+      regs.forEach(function(r){ fcmData.push([p,+s[0],+s[1],r,n(fcm[r]),n(avg)]); });
+    } else if(avg!=null){
+      fcmData.push([p,+s[0],+s[1],'(Promedio nacional únicamente)',null,n(avg)]);
+    }
+  });
+  var wsFCM = XLSX.utils.aoa_to_sheet(fcmData);
+  wsFCM['!cols']=[{wch:12},{wch:6},{wch:10},{wch:28},{wch:18},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, wsFCM, 'HECHOS_FCM_REGION');
+
+  /* ══ 9. HECHOS_EMPRESAS_IES ══ */
+  var EMP_L=['Otras Emp.','TVN','BancoEstado','CODELCO','ENAP','Emp. Portuarias','Emp. Defensa','ENAMI','EFE','METRO'];
+  var EI_L=['Ing. Operación','Transferencias','Fin. Fiscal','Otros','Endeudamiento','Recuperación','Venta Activos'];
+  var EG_L=['Personal','Bs. y Servicios','Transferencias','Inv. Real','Comp. Pendientes','Serv. Deuda','Inv. Financiera'];
+  var empData=[['PeriodoID','Año','Trimestre','Subsector','Tipo','Componente','Monto_MM$']];
+  periods.forEach(function(p){
+    var s=p.split('-'); var d=DB[p];
+    var emp=d.empresas||[];
+    EMP_L.forEach(function(l,i){ empData.push([p,+s[0],+s[1],'Empresas Estado','Utilidades',l,n(emp[i])]); });
+    var ei=d.eduIng||[]; var eg=d.eduGas||[]; var gr=d.grat||{};
+    EI_L.forEach(function(l,i){ empData.push([p,+s[0],+s[1],'IES','Ingreso',l,n(ei[i])]); });
+    EG_L.forEach(function(l,i){ empData.push([p,+s[0],+s[1],'IES','Gasto',  l,n(eg[i])]); });
+    empData.push([p,+s[0],+s[1],'IES','Gratuidad','Monto B$',n(gr.g)]);
+    empData.push([p,+s[0],+s[1],'IES','Gratuidad','Total Transf. B$',n(gr.t)]);
+    empData.push([p,+s[0],+s[1],'IES','Gratuidad','% Gratuidad',n(gr.p)]);
+  });
+  var wsEmp = XLSX.utils.aoa_to_sheet(empData);
+  wsEmp['!cols']=[{wch:12},{wch:6},{wch:10},{wch:18},{wch:12},{wch:28},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsEmp, 'HECHOS_EMPRESAS_IES');
+
+  /* ══ 10. HECHOS_RANKING ══ */
+  var rkData=[['PeriodoID','Año','Trimestre','Tipo','Posicion','Ministerio_Partida','Ejecucion_%']];
+  periods.forEach(function(p){
+    var s=p.split('-'); var d=DB[p];
+    (d.rankingMay||[]).forEach(function(r,i){ rkData.push([p,+s[0],+s[1],'Mayor Ejecución',i+1,r.name,r.pct]); });
+    (d.rankingMen||[]).forEach(function(r,i){ rkData.push([p,+s[0],+s[1],'Menor Ejecución',i+1,r.name,r.pct]); });
+  });
+  var wsRk = XLSX.utils.aoa_to_sheet(rkData);
+  wsRk['!cols']=[{wch:12},{wch:6},{wch:10},{wch:16},{wch:10},{wch:44},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsRk, 'HECHOS_RANKING');
+
+  /* Download */
+  var fname = 'IGFE_BaseDatos_Historica_' + new Date().toISOString().slice(0,10) + '.xlsx';
   XLSX.writeFile(wb, fname);
 }
 
