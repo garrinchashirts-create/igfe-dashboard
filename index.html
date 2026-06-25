@@ -31,7 +31,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .ct-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px}
 .ct-row .ct{margin-bottom:0;flex:1}
 .exp-bar{display:flex;gap:8px;margin-left:auto;align-items:center}
-.exp-btn{font-size:10px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:inherit;border:none;display:flex;align-items:center;gap:5px;transition:opacity .15s}
+.exp-btn{font-size:13px;font-weight:700;padding:8px 18px;border-radius:8px;cursor:pointer;font-family:inherit;border:none;display:flex;align-items:center;gap:7px;transition:opacity .15s;letter-spacing:.2px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .exp-btn:hover{opacity:.85}
 .exp-btn-xl{background:#1D6F42;color:#fff}
 .exp-btn-pdf{background:#e8336e;color:#fff}
@@ -180,12 +180,79 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
 }
 
 @media print {
-  .period-banner, .notice, .exp-bar, .hist-btn, .hist-overlay, .cover { display: none !important; }
-  body { background: white !important; }
-  .card { break-inside: avoid; border: 0.5px solid #ddd !important; }
-  .sec { break-before: auto; }
-  canvas { max-width: 100% !important; }
+  /* Hide UI chrome */
+  .period-banner,.notice,.exp-bar,.hist-btn,.hist-overlay,.cover,
+  .hdr-kpis,.narr,footer { display:none !important; }
+
+  /* Page setup */
+  @page { size:A4 landscape; margin:12mm 14mm; }
+  body { background:white !important; font-size:9pt; color:#000; }
+  * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
+  /* Header */
+  .hdr { background:#1a2744 !important; color:white !important;
+         padding:8px 14px !important; margin-bottom:10px;
+         border-radius:0 !important; }
+  .hdr h1 { font-size:13pt !important; color:white !important; }
+  .hdr .logo-b { background:#00b4a0 !important; color:white !important; }
+  .hdr-sub,.hdr-desc { color:rgba(255,255,255,.8) !important; }
+
+  /* Period banner — show simplified */
+  .period-banner { display:block !important; background:#f5f7fa !important;
+    border-bottom:2px solid #1a2744 !important; padding:6px 14px !important; }
+  .pb-filters,.pb-divider { display:none !important; }
+  .pb-tag { font-size:12pt !important; font-weight:700 !important; color:#1a2744 !important; }
+  .pb-txt { font-size:9pt !important; color:#555 !important; }
+  .exp-bar,.hist-btn { display:none !important; }
+
+  /* Layout */
+  main { padding:0 !important; }
+  .sec { margin-bottom:10px !important; break-before:auto; }
+  .sec-lbl { font-size:9pt !important; font-weight:700 !important;
+              color:#1a2744 !important; border-bottom:1.5px solid #1a2744 !important;
+              padding-bottom:3px !important; margin-bottom:6px !important; }
+
+  /* Cards */
+  .g2,.g3 { display:grid !important; gap:8px !important; }
+  .g2 { grid-template-columns:1fr 1fr !important; }
+  .g3 { grid-template-columns:1fr 1fr 1fr !important; }
+  .card { break-inside:avoid !important; border:1px solid #ccc !important;
+          border-radius:4px !important; padding:8px !important;
+          background:white !important; margin-bottom:0 !important; }
+  .ct { font-size:8pt !important; font-weight:700 !important; color:#1a2744 !important; margin-bottom:2px !important; }
+  .cs { font-size:7pt !important; color:#888 !important; }
+  .ct-row { margin-bottom:4px !important; }
+
+  /* Cobertura bars */
+  .cbr-wrap { margin-bottom:4px !important; }
+  .cbr-lbl { font-size:7pt !important; }
+  .cbr-track { height:8px !important; border-radius:3px !important; }
+  .cbr-bar { border-radius:3px !important; }
+
+  /* KPI cards */
+  .kpi { padding:6px 8px !important; border-radius:4px !important; }
+  .kpi-l { font-size:7pt !important; }
+  .kpi-v { font-size:11pt !important; }
+
+  /* Charts — resize for print */
+  .cw { height:120px !important; }
+  canvas { max-width:100% !important; max-height:120px !important; }
+
+  /* SVG circles */
+  #circles-svg svg { max-height:200px !important; }
+
+  /* Rankings */
+  .rank-col { break-inside:avoid !important; }
+  .rank-item { font-size:7pt !important; padding:2px 4px !important; }
+
+  /* FCM bars */
+  .fcm-bar-wrap { margin-bottom:2px !important; }
+  .fcm-lbl,.fcm-val { font-size:7pt !important; }
+
+  /* Footer print info */
+  .print-footer { display:block !important; }
 }
+.print-footer { display:none; }
 </style>
 </head>
 <body>
@@ -1541,6 +1608,8 @@ function exportPDF() {
   histBtns.forEach(function(b){ b.style.display='none'; });
 
   /* Print dialog = PDF in modern browsers */
+  document.getElementById('print-date') && 
+    (document.getElementById('print-date').textContent = 'Generado: ' + new Date().toLocaleDateString('es-CL'));
   window.print();
 
   /* Restore */
@@ -1558,6 +1627,11 @@ window.addEventListener('DOMContentLoaded', function() {
   render(y, q);
 });
 </script>
+
+<div class="print-footer" style="margin-top:16px;padding-top:8px;border-top:1px solid #ccc;font-size:7pt;color:#888;display:flex;justify-content:space-between">
+  <span>Contraloría General de la República de Chile — Informe de Gestión Financiera del Estado (IGFE)</span>
+  <span id="print-date"></span>
+</div>
 
 <!-- HISTÓRICO MODAL -->
 <div class="hist-overlay" id="hist-overlay" onclick="if(event.target===this)closeHistoric()">
