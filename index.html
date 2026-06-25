@@ -691,10 +691,10 @@ function render(year, q) {
     var dx=x2-x1,dy=y2-y1,d=Math.sqrt(dx*dx+dy*dy),nx=dx/d,ny=dy/d,px=-ny,py=nx;
     var ex=x2-nx*5,ey=y2-ny*5;
     /* label at 40% along arrow, pushed 14px OUTWARD from center (same side as arrow) */
-    var t=0.40;
+    var t=0.38;
     var bx=x1+dx*t, by=y1+dy*t;
-    var mx=bx + px*14*side;   /* same side as the arrow = outside */
-    var my=by + py*14*side;
+    var mx=bx + px*26*side;
+    var my=by + py*26*side;
     var ang=Math.atan2(dy,dx)*180/Math.PI;
     /* keep text readable: flip if arrow points left */
     if(ang>90||ang<-90) ang+=180;
@@ -712,7 +712,7 @@ function render(year, q) {
   }
 
   function biArr(frm,rF,to,rT,lblAB,lblBA){
-    var dx=to.x-frm.x,dy=to.y-frm.y,d=Math.sqrt(dx*dx+dy*dy),nx=dx/d,ny=dy/d,px=-ny,py=nx,off=5;
+    var dx=to.x-frm.x,dy=to.y-frm.y,d=Math.sqrt(dx*dx+dy*dy),nx=dx/d,ny=dy/d,px=-ny,py=nx,off=7;
     var fx=frm.x+nx*rF,fy=frm.y+ny*rF,tx=to.x-nx*rT,ty=to.y-ny*rT;
     var out='';
     /* arrow A: frm\u2192to, shifted +off perpendicular (left side), label on left */
