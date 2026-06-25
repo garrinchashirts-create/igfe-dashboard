@@ -702,27 +702,27 @@ function render(year, q) {
   /* ── PERIOD LABEL ── */
   +'<text x="372" y="18" font-family="Arial" font-size="11" fill="#888" text-anchor="middle">'+perLabel+'</text>'
 
-  /* ── ARROWS COD ↔ SP ── */
-  +'<line x1="198" y1="90" x2="285" y2="143" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
-  +fl(lCOD_in,  240,  99, 31.3)
-  +'<line x1="285" y1="177" x2="198" y2="132" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
-  +fl(lCOD_out, 244, 171, 27.3)
+  /* ── ARROWS COD ↔ SP (parallel, 19.1°) ── */
+  +'<line x1="180" y1="108" x2="288" y2="145" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
+  +fl(lCOD_in,  226, 98, 19.1)
+  +'<line x1="293" y1="132" x2="185" y2="95" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
+  +fl(lCOD_out, 247, 143, 19.1)
 
-  /* ── ARROWS OTH ↔ SP ── */
-  +'<line x1="448" y1="143" x2="522" y2="90" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
-  +fl(lOTH_in,  469, 110, -35.6)
-  +'<line x1="522" y1="115" x2="448" y2="168" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
-  +fl(lOTH_out, 501, 148, -35.6)
+  /* ── ARROWS OTH ↔ SP (parallel, -20°) ── */
+  +'<line x1="536" y1="96" x2="439" y2="131" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
+  +fl(lOTH_in,  490, 109, -20)
+  +'<line x1="444" y1="144" x2="540" y2="109" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
+  +fl(lOTH_out, 492, 131, -20)
 
-  /* ── ARROWS MUN ↔ SP ── */
-  +'<line x1="448" y1="207" x2="525" y2="250" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
-  +fl(lMUN_out, 486, 212, 29.2)
-  +'<line x1="525" y1="225" x2="448" y2="192" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
-  +fl(lMUN_in,  489, 225, 23.2)
+  /* ── ARROWS MUN ↔ SP (parallel, 21.7°) ── */
+  +'<line x1="541" y1="227" x2="443" y2="188" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
+  +fl(lMUN_in,  495, 245, 21.7)
+  +'<line x1="438" y1="201" x2="536" y2="240" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
+  +fl(lMUN_out, 485, 183, 21.7)
 
-  /* ── ARROW IES ← SP ── */
-  +'<line x1="285" y1="207" x2="197" y2="233" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
-  +fl(lIES_out, 246, 204, -16.5)
+  /* ── ARROW IES ← SP (single, -20.7°) ── */
+  +'<line x1="291" y1="193" x2="182" y2="235" stroke="#9a9a9a" stroke-width="1.5" marker-end="url(#ah2)"/>'
+  +fl(lIES_out, 247, 200, -20.7)
 
   /* ── ZOFRI vertical ── */
   +(lZOFRI ? '<line x1="590" y1="130" x2="590" y2="188" stroke="#9a9a9a" stroke-width="1.2" marker-end="url(#ah2)"/>'
