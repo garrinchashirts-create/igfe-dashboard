@@ -467,6 +467,30 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
     </div>
   </div>
 
+  <!-- 5b. MODIFICACIONES Y RANKING GOBIERNOS REGIONALES -->
+  <div class="sec">
+    <div class="sec-lbl">Modificaciones y Ranking — Gobiernos Regionales</div>
+    <div class="card">
+      <div class="ct-row"><div class="ct">Modificaciones Presupuestarias por Región</div>
+      <div class="cs" id="cs-modpres">% de variación presupuesto actualizado/presupuesto inicial</div></div>
+      <div class="cw"><canvas id="c-modpres"></canvas></div>
+    </div>
+    <div class="card" style="margin-top:8px">
+      <div class="ct" id="goreg-rank-title">Ranking Ejecución Presupuestaria Gobiernos Regionales</div>
+      <div class="cs">% de ejecución devengada por región</div>
+      <div class="g2" style="margin-top:.75rem">
+        <div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:8px;padding:6px 10px;background:var(--navy);color:white;border-radius:6px;text-align:center">Mayores Ejecuciones Devengadas</div>
+          <div id="goreg-rank-may"></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:8px;padding:6px 10px;background:var(--teal);color:white;border-radius:6px;text-align:center">Menores Ejecuciones Devengadas</div>
+          <div id="goreg-rank-men"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 6. SECTOR MUNICIPAL -->
   <div class="sec">
     <div class="sec-lbl">Sector Municipal</div>
@@ -578,6 +602,9 @@ const FULL_NAMES = {"Sec.Público": "Sector Público", "Sec.Municipal": "Sector 
 
 
 const MUN_RANK = {"2025-4":{"may":[{"name":"Graneros","pct":109.7},{"name":"Queil\u00e9n","pct":104.5},{"name":"Alto Biob\u00edo","pct":104.4},{"name":"M\u00e1fil","pct":103.7},{"name":"R\u00edo Claro","pct":102.6},{"name":"Pichilemu","pct":101.7},{"name":"Catemu","pct":101.4},{"name":"San Fernando","pct":101.1},{"name":"Quilaco","pct":100.7},{"name":"San Ignacio","pct":100.6}],"men":[{"name":"Mar\u00eda Elena","pct":36.2},{"name":"San Pedro de Atacama","pct":41.4},{"name":"General Lagos","pct":41.9},{"name":"Sierra Gorda","pct":54.3},{"name":"Cabo de Hornos","pct":57.8},{"name":"Primavera","pct":61.2},{"name":"Timaukel","pct":61.5},{"name":"R\u00edo Ib\u00e1\u00f1ez","pct":61.9},{"name":"Curarrehue","pct":63.6},{"name":"Diego de Almagro","pct":66.0}]},"2025-3":{"may":[{"name":"Queil\u00e9n","pct":100.6},{"name":"Quinchao","pct":88.6},{"name":"M\u00e1fil","pct":84.9},{"name":"Graneros","pct":87.0},{"name":"Colchane","pct":82.0},{"name":"R\u00edo Claro","pct":83.7},{"name":"Alhu\u00e9","pct":80.0},{"name":"Combarbal\u00e1","pct":78.7},{"name":"Marchihue","pct":77.8},{"name":"San Vicente","pct":77.6}],"men":[{"name":"Puchuncav\u00ed","pct":25.2},{"name":"Paihuano","pct":26.6},{"name":"Curarrehue","pct":29.2},{"name":"Mar\u00eda Pinto","pct":30.0},{"name":"Independencia","pct":34.8},{"name":"Portezuelo","pct":36.1},{"name":"Sierra Gorda","pct":36.6},{"name":"San Pedro de Atacama","pct":38.9},{"name":"Mar\u00eda Elena","pct":40.8},{"name":"General Lagos","pct":40.9}]},"2025-2":{"may":[{"name":"Queil\u00e9n","pct":74.2},{"name":"Quinchao","pct":69.3},{"name":"M\u00e1fil","pct":66.7},{"name":"Graneros","pct":69.2},{"name":"Colchane","pct":58.8},{"name":"Huasco","pct":60.8},{"name":"Alhu\u00e9","pct":58.1},{"name":"Pe\u00f1alol\u00e9n","pct":57.9},{"name":"Marchihue","pct":57.7},{"name":"R\u00edo Claro","pct":57.7}],"men":[{"name":"R\u00edo Verde","pct":7.7},{"name":"Cholchol","pct":12.9},{"name":"Frutillar","pct":16.2},{"name":"Curanilahue","pct":16.5},{"name":"Victoria","pct":18.9},{"name":"Curarrehue","pct":20.1},{"name":"Cobquecura","pct":26.3},{"name":"San Pedro de Atacama","pct":26.4},{"name":"General Lagos","pct":26.9},{"name":"Mar\u00eda Elena","pct":27.2}]},"2025-1":{"may":[{"name":"M\u00e1fil","pct":47.6},{"name":"Colchane","pct":37.0},{"name":"Quinchao","pct":32.6},{"name":"Vi\u00f1a del Mar","pct":33.0},{"name":"Salamanca","pct":30.8},{"name":"Las Condes","pct":32.4},{"name":"Marchihue","pct":30.5},{"name":"Valdivia","pct":30.2},{"name":"Huasco","pct":30.1},{"name":"Panquehue","pct":28.6}],"men":[{"name":"R\u00edo Ib\u00e1\u00f1ez","pct":6.1},{"name":"Antofagasta","pct":7.3},{"name":"R\u00edo Verde","pct":9.3},{"name":"Curarrehue","pct":9.8},{"name":"San Pedro de Atacama","pct":11.3},{"name":"Cabo de Hornos","pct":12.0},{"name":"Paillaco","pct":12.2},{"name":"Paine","pct":12.3},{"name":"General Lagos","pct":12.4},{"name":"Mar\u00eda Elena","pct":13.4}]},"2026-1":{"may":[{"name":"Graneros","pct":42.6},{"name":"Queil\u00e9n","pct":41.8},{"name":"Quinchao","pct":35.5},{"name":"Chanco","pct":34.9},{"name":"Colchane","pct":33.4},{"name":"Olmu\u00e9","pct":32.1},{"name":"Litueche","pct":31.2},{"name":"Vi\u00f1a del Mar","pct":31.0},{"name":"Panquehue","pct":30.4},{"name":"San Jos\u00e9 de Maipo","pct":30.0}],"men":[{"name":"Los Muermos","pct":5.1},{"name":"San Antonio","pct":6.4},{"name":"General Lagos","pct":8.0},{"name":"San Pedro de Atacama","pct":8.3},{"name":"La Ligua","pct":8.9},{"name":"Mar\u00eda Elena","pct":9.8},{"name":"R\u00edo Verde","pct":10.1},{"name":"Sierra Gorda","pct":10.3},{"name":"Alhu\u00e9","pct":11.0},{"name":"Primavera","pct":12.2}]}};
+
+const MOD_PRES = {"2025-4":{"Antofagasta":64.3,"Magallanes y de la Antártica Chilena":24.4,"Metropolitana de Santiago":12.8,"Arica y Parinacota":9.9,"Los Lagos":9.9,"Maule":6.7,"Aysén del Gral. Carlos Ibáñez del Campo":5.1,"Biobío":3.4,"Libertador General Bernardo O'Higgins":-0.5,"Ñuble":-1.7,"La Araucanía":-3.8,"Los Ríos":-6.0,"Atacama":-8.5,"Valparaíso":-9.1,"Tarapacá":-15.4,"Coquimbo":-16.9},"2026-1":{"Aysén del Gral. Carlos Ibáñez del Campo":0.0,"Atacama":0.0,"Arica y Parinacota":0.6,"Ñuble":0.0,"Los Ríos":0.3,"Magallanes y de la Antártica Chilena":0.0,"Libertador General Bernardo O'Higgins":0.2,"La Araucanía":0.0,"Coquimbo":0.4,"Valparaíso":-2.8,"Biobío":0.0,"Maule":0.0,"Los Lagos":0.0,"Tarapacá":0.2,"Antofagasta":-2.4,"Metropolitana de Santiago":0.0}};
+const GOREG_RANK = {"2025-4":{"may":[{"name":"Valparaíso","pct":99.9},{"name":"Los Lagos","pct":99.6},{"name":"Maule","pct":99.3},{"name":"Ñuble","pct":99.2},{"name":"Metropolitana de Santiago","pct":98.3},{"name":"Los Ríos","pct":98.2},{"name":"Biobío","pct":98.0},{"name":"Libertador General Bernardo O'Higgins","pct":97.6}],"men":[{"name":"Atacama","pct":85.8},{"name":"Magallanes y de la Antártica Chilena","pct":89.2},{"name":"Coquimbo","pct":89.8},{"name":"Antofagasta","pct":90.7},{"name":"Arica y Parinacota","pct":92.8},{"name":"Aysén del Gral. Carlos Ibáñez del Campo","pct":93.2},{"name":"La Araucanía","pct":95.3},{"name":"Tarapacá","pct":97.3}]},"2026-1":{"may":[{"name":"Tarapacá","pct":37.3},{"name":"Maule","pct":26.5},{"name":"Coquimbo","pct":24.4},{"name":"Los Lagos","pct":23.6},{"name":"Ñuble","pct":23.3},{"name":"Arica y Parinacota","pct":18.4},{"name":"Valparaíso","pct":17.4},{"name":"Atacama","pct":15.8}],"men":[{"name":"Biobío","pct":13.8},{"name":"Los Ríos","pct":12.6},{"name":"Aysén del Gral. Carlos Ibáñez del Campo","pct":11.8},{"name":"La Araucanía","pct":11.7},{"name":"Antofagasta","pct":11.2},{"name":"Magallanes y de la Antártica Chilena","pct":10.6},{"name":"Metropolitana de Santiago","pct":10.3},{"name":"Libertador General Bernardo O'Higgins","pct":6.0}]}};
 
 const KPI_MAP = {
   "2023-3":["95.0","—","835754.0"],
@@ -1250,6 +1277,48 @@ function render(year, q) {
     }
     mayEl.innerHTML = rankRows(mr.may, 'var(--navy)');
     menEl.innerHTML = rankRows(mr.men, 'var(--teal)');
+  })();
+
+  // Gob. Regionales ranking (mayores/menores ejecución)
+  (function(){
+    var gr = GOREG_RANK[key];
+    var titleEl = document.getElementById('goreg-rank-title');
+    var mayEl = document.getElementById('goreg-rank-may');
+    var menEl = document.getElementById('goreg-rank-men');
+    if(!mayEl || !menEl) return;
+    if(!gr) {
+      mayEl.innerHTML = '<div style="color:#aaa;font-size:11px;padding:8px">Sin datos para este periodo</div>';
+      menEl.innerHTML = '<div style="color:#aaa;font-size:11px;padding:8px">Sin datos para este periodo</div>';
+      return;
+    }
+    if(titleEl) titleEl.textContent = 'Ranking Ejecución Presupuestaria Gobiernos Regionales · ' + curPer;
+    function rankRows(items, color) {
+      return items.map(function(it, i) {
+        var w = Math.min(it.pct, 120) / 120 * 100;
+        return '<div class="mun-row">' +
+          '<span class="mun-n">' + (i+1) + '</span>' +
+          '<span class="mun-name">' + it.name + '</span>' +
+          '<div class="mun-bw"><div class="mun-bar" style="width:' + w + '%;background:' + color + '"></div></div>' +
+          '<span class="mun-pct" style="color:' + color + '">' + it.pct.toFixed(1) + '%</span>' +
+          '</div>';
+      }).join('');
+    }
+    mayEl.innerHTML = rankRows(gr.may, 'var(--navy)');
+    menEl.innerHTML = rankRows(gr.men, 'var(--teal)');
+  })();
+
+  // Modificaciones Presupuestarias por Región
+  (function(){
+    var mp = MOD_PRES[key];
+    var csEl = document.getElementById('cs-modpres');
+    if (!mp) return;
+    if (csEl) csEl.textContent = '% de variación presupuesto actualizado/presupuesto inicial · ' + curPer;
+    var mpSrt = sortDesc(Object.keys(mp), Object.values(mp));
+    var mpL = mpSrt.labels, mpV = mpSrt.cur;
+    var mpBG = mpV.map(v => v >= 0 ? 'rgba(232,51,110,.7)' : 'rgba(46,95,163,.55)');
+    var mpBC = mpV.map(v => v >= 0 ? CP : C1);
+    bar('c-modpres', mpL, [{label:'Modificación %', data:mpV, backgroundColor:mpBG, borderColor:mpBC, borderWidth:1}],
+      {fmt: v => v.toFixed(1)+'%', ytick: v => v+'%', rot:45, xs:8});
   })();
 
   // FCM
