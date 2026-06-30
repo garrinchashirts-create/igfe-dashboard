@@ -1383,7 +1383,7 @@ function render(year, q) {
     var eduIngT = eduCur.reduce(function(a,b){return a+(b||0);},0);
     dsEdu.push(ds(shortPer+'  $'+Math.round(eduIngT).toLocaleString('es-CL'), eduCur, 'rgba(0,180,160,.65)', C2));
     if (eduPrev) { var pEIT=eduPrev.reduce(function(a,b){return a+(b||0);},0); dsEdu.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+Math.round(pEIT).toLocaleString('es-CL'), eduPrev, 'rgba(46,95,163,.35)', C1)); }
-    bar('c-edu', eduL, dsEdu, {fmt: v => '$'+v, ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL');}, rot:35});
+    bar('c-edu', eduL, dsEdu, {fmt: v => '$'+Math.round(v).toLocaleString('es-CL'), ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL');}, rot:35});
   }
 
   // Gastos IES chart — always sorted largest to smallest for the selected period
@@ -1395,7 +1395,7 @@ function render(year, q) {
     var eduGasT = eguCur.reduce(function(a,b){return a+(b||0);},0);
     dsEdug.push(ds(shortPer+'  $'+Math.round(eduGasT).toLocaleString('es-CL'), eguCur, 'rgba(0,180,160,.65)', C2));
     if (eguPrev) { var pEGT=eguPrev.reduce(function(a,b){return a+(b||0);},0); dsEdug.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+Math.round(pEGT).toLocaleString('es-CL'), eguPrev, 'rgba(46,95,163,.35)', C1)); }
-    bar('c-edug', gasIES_L, dsEdug, {fmt: v => '$'+v, ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL');}, rot:35});
+    bar('c-edug', gasIES_L, dsEdug, {fmt: v => '$'+Math.round(v).toLocaleString('es-CL'), ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL');}, rot:35});
   }
 
   // Gratuidad — ALL periods
