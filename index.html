@@ -1206,14 +1206,20 @@ function render(year, q) {
   }
 
   // Empresas
-  const empL = ['Otras Emp.','TVN','BancoEstado','CODELCO','ENAP','Emp.Port.','Emp.Def.','ENAMI','EFE','METRO'];
+  const empLOrig = ['Otras Emp.','TVN','BancoEstado','CODELCO','ENAP','Emp.Port.','Emp.Def.','ENAMI','EFE','METRO'];
   if (d.empresas) {
-    const empBG = d.empresas.map(v => v >= 0 ? 'rgba(0,180,160,.7)' : 'rgba(232,51,110,.6)');
-    const empBC = d.empresas.map(v => v >= 0 ? C2 : CP);
+    // Sort by current period's utility, highest to lowest
+    const empIdx = empLOrig.map(function(_,i){return i;})
+      .sort(function(a,b){ return (d.empresas[b]||0) - (d.empresas[a]||0); });
+    const empL = empIdx.map(function(i){return empLOrig[i];});
+    const empCur = empIdx.map(function(i){return d.empresas[i];});
+    const empPrev = (prd && prd.empresas) ? empIdx.map(function(i){return prd.empresas[i];}) : null;
+    const empBG = empCur.map(v => v >= 0 ? 'rgba(0,180,160,.7)' : 'rgba(232,51,110,.6)');
+    const empBC = empCur.map(v => v >= 0 ? C2 : CP);
     const dsEmp = [];
-    var empTotal = d.empresas.reduce(function(a,b){return a+(b||0);},0);
-    dsEmp.push({label:shortPer+'  $'+Math.round(empTotal).toLocaleString('es-CL')+'MM', data:d.empresas, backgroundColor:empBG, borderColor:empBC, borderWidth:1})
-    if (prd && prd.empresas) { var pET=prd.empresas.reduce(function(a,b){return a+(b||0);},0); dsEmp.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+Math.round(Math.abs(pET)).toLocaleString('es-CL')+'MM', prd.empresas, 'rgba(46,95,163,.35)', C1)); };
+    var empTotal = empCur.reduce(function(a,b){return a+(b||0);},0);
+    dsEmp.push({label:shortPer+'  $'+Math.round(empTotal).toLocaleString('es-CL')+'MM', data:empCur, backgroundColor:empBG, borderColor:empBC, borderWidth:1})
+    if (empPrev) { var pET=empPrev.reduce(function(a,b){return a+(b||0);},0); dsEmp.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+Math.round(Math.abs(pET)).toLocaleString('es-CL')+'MM', empPrev, 'rgba(46,95,163,.35)', C1)); };
     bar('c-emp', empL, dsEmp, {fmt: v => '$'+v+'MM', ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL')+'MM';}, rot:40, xs:9});
   }
 
