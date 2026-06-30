@@ -1244,13 +1244,17 @@ function render(year, q) {
   document.getElementById('r-may').innerHTML = rankHTML(d.rankingMay, C1);
   document.getElementById('r-men').innerHTML = rankHTML(d.rankingMen, CP);
 
-  // Municipal Ingresos
-  const miL = ['Ing.Propios','Transf.MINSAL','Transf.MINEDUC','FCM','Otros Ing.','Ing.Percibir','Ing.Bfo.FCM'];
+  // Municipal Ingresos — display order matches the official report layout
+  const miLOrig = ['Ing.Propios','Transf.MINSAL','Transf.MINEDUC','FCM','Otros Ing.','Ing.Percibir','Ing.Bfo.FCM'];
+  const miOrder = [0,5,1,6,2,3,4];
+  const miL = miOrder.map(function(i){return miLOrig[i];});
   if (d.munIng) {
+    const miCur = miOrder.map(function(i){return d.munIng[i];});
+    const miPrev = (prd && prd.munIng) ? miOrder.map(function(i){return prd.munIng[i];}) : null;
     const dsMI = [];
-    var mIngTotal = d.munIng.reduce(function(a,b){return a+(b||0);},0);
-    dsMI.push(ds(shortPer+'  $'+(mIngTotal/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', d.munIng, 'rgba(0,180,160,.65)', C2));
-    if (prd && prd.munIng) { var pMIT=prd.munIng.reduce(function(a,b){return a+(b||0);},0); dsMI.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pMIT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', prd.munIng, 'rgba(46,95,163,.35)', C1)); }
+    var mIngTotal = miCur.reduce(function(a,b){return a+(b||0);},0);
+    dsMI.push(ds(shortPer+'  $'+(mIngTotal/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', miCur, 'rgba(0,180,160,.65)', C2));
+    if (miPrev) { var pMIT=miPrev.reduce(function(a,b){return a+(b||0);},0); dsMI.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pMIT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', miPrev, 'rgba(46,95,163,.35)', C1)); }
     bar('c-ming', miL, dsMI, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM';}, rot:40});
   }
 
