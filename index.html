@@ -617,6 +617,7 @@ const PFULL = {
    CHART SETUP
    ==================================================== */
 Chart.defaults.font.family = 'Segoe UI,Arial,sans-serif';
+Chart.defaults.animation = false;
 Chart.defaults.font.size = 11;
 Chart.defaults.color = '#555';
 const GC = 'rgba(0,0,0,0.06)';
@@ -630,7 +631,7 @@ let _kpisOrigParent = null, _kpisOrigNext = null;
 
 function _onBeforePrint() {
   PRINTING = true;
-  CH.forEach(function(c){ try{ c.update('none'); c.draw(); }catch(e){} });
+  CH.forEach(function(c){ try{ c.resize(); c.update('none'); c.draw(); }catch(e){} });
   /* Move the KPI cards onto the cover page (page 1) so the first content page isn't wasted on them.
      Hooked here (not just the export button) so it also works with native browser Print/Ctrl+P. */
   var kpisEl = document.getElementById('kpis');
