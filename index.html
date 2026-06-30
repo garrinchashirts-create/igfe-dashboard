@@ -756,6 +756,18 @@ function ds(label, data, bg, bc) {
   return { label, data, backgroundColor: bg, borderColor: bc, borderWidth: 1 };
 }
 
+/* Sort a category bar chart's labels + data so the largest value (in the selected period) comes first.
+   Returns {labels, cur, prev}. prevArr is optional (year-ago comparison series). */
+function sortDesc(labels, curArr, prevArr) {
+  var idx = labels.map(function(_,i){ return i; })
+    .sort(function(a,b){ return (curArr[b]||0) - (curArr[a]||0); });
+  return {
+    labels: idx.map(function(i){ return labels[i]; }),
+    cur: idx.map(function(i){ return curArr[i]; }),
+    prev: prevArr ? idx.map(function(i){ return prevArr[i]; }) : null
+  };
+}
+
 /* ====================================================
    SELECTORS
    ==================================================== */
@@ -1199,11 +1211,13 @@ function render(year, q) {
   // Chart: Gastos sector
   var prev = getPrev(year, qi);
   const prd = prev ? DB[prev] : null;
-  const secL = ['Sec.P\u00fablico','Sec.Municipal','Empresas','Educ.Sup.'];
+  const secLOrig = ['Sec.P\u00fablico','Sec.Municipal','Empresas','Educ.Sup.'];
   const secK = ['Sector P\u00fablico','Sector Municipal','Empresas del Estado','Instituciones de Educaci\u00f3n Superior'];
-  const secV = secK.map(s => gs[s] || null);
+  const secVOrig = secK.map(s => gs[s] || null);
   const prevGS = prd ? prd.gastoSector : null;
-  const prevV = prevGS ? secK.map(s => prevGS[s] || null) : null;
+  const prevVOrig = prevGS ? secK.map(s => prevGS[s] || null) : null;
+  const secSrt = sortDesc(secLOrig, secVOrig, prevVOrig);
+  const secL = secSrt.labels, secV = secSrt.cur, prevV = secSrt.prev;
   const dsSec = [];
   var secTotal = secV.reduce(function(a,b){return a+(b||0);},0);
   var prevSecTotal = prevV ? prevV.reduce(function(a,b){return a+(b||0);},0) : null;
@@ -1211,23 +1225,27 @@ function render(year, q) {
   if (prevV) dsSec.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+prevSecTotal.toFixed(1)+'B', prevV, 'rgba(46,95,163,.35)', C1));
   bar('c-gsec', secL, dsSec, {fmt: v => '$'+v+'B'});
 
-  // Chart: Ingresos SP
-  const ispL = ['Impuestos','Endeudam.','Otros Corr.','Vta.Activos','Impos.Prev.','Recup.','Otros'];
+  // Chart: Ingresos SP — always sorted largest to smallest for the selected period
+  const ispLOrig = ['Impuestos','Endeudam.','Otros Corr.','Vta.Activos','Impos.Prev.','Recup.','Otros'];
   if (d.ingresosSP) {
+    const ispSrt = sortDesc(ispLOrig, d.ingresosSP, prd && prd.ingresosSP);
+    const ispL = ispSrt.labels, ispCur = ispSrt.cur, ispPrev = ispSrt.prev;
     const dsISP = [];
-    var ispTotal = d.ingresosSP.reduce(function(a,b){return a+(b||0);},0);
-    dsISP.push(ds(shortPer+'  $'+ispTotal.toFixed(1)+'B', d.ingresosSP, 'rgba(0,180,160,.65)', C2));
-    if (prd && prd.ingresosSP) { var pIspT=prd.ingresosSP.reduce(function(a,b){return a+(b||0);},0); dsISP.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+pIspT.toFixed(1)+'B', prd.ingresosSP, 'rgba(46,95,163,.35)', C1)); }
+    var ispTotal = ispCur.reduce(function(a,b){return a+(b||0);},0);
+    dsISP.push(ds(shortPer+'  $'+ispTotal.toFixed(1)+'B', ispCur, 'rgba(0,180,160,.65)', C2));
+    if (ispPrev) { var pIspT=ispPrev.reduce(function(a,b){return a+(b||0);},0); dsISP.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+pIspT.toFixed(1)+'B', ispPrev, 'rgba(46,95,163,.35)', C1)); }
     bar('c-isp', ispL, dsISP, {fmt: v => '$'+v+'B', rot:40});
   }
 
-  // Chart: Gastos SP
-  const gspL = ['Transf.','Serv.Deuda','Personal','Seg.Social','Act.Fin.','Bs.Serv.','Otros','Inversion'];
+  // Chart: Gastos SP — always sorted largest to smallest for the selected period
+  const gspLOrig = ['Transf.','Serv.Deuda','Personal','Seg.Social','Act.Fin.','Bs.Serv.','Otros','Inversion'];
   if (d.gastosSP) {
+    const gspSrt = sortDesc(gspLOrig, d.gastosSP, prd && prd.gastosSP);
+    const gspL = gspSrt.labels, gspCur = gspSrt.cur, gspPrev = gspSrt.prev;
     const dsGSP = [];
-    var gspTotal = d.gastosSP.reduce(function(a,b){return a+(b||0);},0);
-    dsGSP.push(ds(shortPer+'  $'+gspTotal.toFixed(1)+'B', d.gastosSP, 'rgba(0,180,160,.65)', C2));
-    if (prd && prd.gastosSP) { var pGspT=prd.gastosSP.reduce(function(a,b){return a+(b||0);},0); dsGSP.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+pGspT.toFixed(1)+'B', prd.gastosSP, 'rgba(46,95,163,.35)', C1)); }
+    var gspTotal = gspCur.reduce(function(a,b){return a+(b||0);},0);
+    dsGSP.push(ds(shortPer+'  $'+gspTotal.toFixed(1)+'B', gspCur, 'rgba(0,180,160,.65)', C2));
+    if (gspPrev) { var pGspT=gspPrev.reduce(function(a,b){return a+(b||0);},0); dsGSP.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+pGspT.toFixed(1)+'B', gspPrev, 'rgba(46,95,163,.35)', C1)); }
     bar('c-gsp', gspL, dsGSP, {fmt: v => '$'+v+'B', rot:40});
   }
 
@@ -1244,13 +1262,13 @@ function render(year, q) {
   document.getElementById('r-may').innerHTML = rankHTML(d.rankingMay, C1);
   document.getElementById('r-men').innerHTML = rankHTML(d.rankingMen, CP);
 
-  // Municipal Ingresos — display order matches the official report layout
+  // Municipal Ingresos — always sorted largest to smallest for the selected period
   const miLOrig = ['Ing.Propios','Transf.MINSAL','Transf.MINEDUC','FCM','Otros Ing.','Ing.Percibir','Ing.Bfo.FCM'];
-  const miOrder = [0,5,1,6,2,3,4];
-  const miL = miOrder.map(function(i){return miLOrig[i];});
   if (d.munIng) {
-    const miCur = miOrder.map(function(i){return d.munIng[i];});
-    const miPrev = (prd && prd.munIng) ? miOrder.map(function(i){return prd.munIng[i];}) : null;
+    const miSrt = sortDesc(miLOrig, d.munIng, prd && prd.munIng);
+    const miL = miSrt.labels;
+    const miCur = miSrt.cur;
+    const miPrev = miSrt.prev;
     const dsMI = [];
     var mIngTotal = miCur.reduce(function(a,b){return a+(b||0);},0);
     dsMI.push(ds(shortPer+'  $'+(mIngTotal/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', miCur, 'rgba(0,180,160,.65)', C2));
@@ -1258,13 +1276,15 @@ function render(year, q) {
     bar('c-ming', miL, dsMI, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM';}, rot:40});
   }
 
-  // Municipal Gastos
-  const mgL = ['Personal','Bs.Serv.','Transf.Corr.','Ini.Inv.','Serv.Deuda','Prest.SS','Act.NF','Otros'];
+  // Municipal Gastos — always sorted largest to smallest for the selected period
+  const mgLOrig = ['Personal','Bs.Serv.','Transf.Corr.','Ini.Inv.','Serv.Deuda','Prest.SS','Act.NF','Otros'];
   if (d.munGas) {
+    const mgSrt = sortDesc(mgLOrig, d.munGas, prd && prd.munGas);
+    const mgL = mgSrt.labels, mgCur = mgSrt.cur, mgPrev = mgSrt.prev;
     const dsMG = [];
-    var mGasTotal = d.munGas.reduce(function(a,b){return a+(b||0);},0);
-    dsMG.push(ds(shortPer+'  $'+(mGasTotal/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', d.munGas, 'rgba(0,180,160,.65)', C2));
-    if (prd && prd.munGas) { var pMGT=prd.munGas.reduce(function(a,b){return a+(b||0);},0); dsMG.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pMGT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', prd.munGas, 'rgba(46,95,163,.35)', C1)); }
+    var mGasTotal = mgCur.reduce(function(a,b){return a+(b||0);},0);
+    dsMG.push(ds(shortPer+'  $'+(mGasTotal/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', mgCur, 'rgba(0,180,160,.65)', C2));
+    if (mgPrev) { var pMGT=mgPrev.reduce(function(a,b){return a+(b||0);},0); dsMG.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pMGT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', mgPrev, 'rgba(46,95,163,.35)', C1)); }
     bar('c-mgas', mgL, dsMG, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM';}, rot:40});
   }
 
@@ -1301,8 +1321,9 @@ function render(year, q) {
   const fcmAvg = d.fcmAvg || 17.0;
   if (Object.keys(fcmReg).length) {
     document.getElementById('cs-fcm').textContent = 'Porcentaje \u00b7 verde = sobre promedio nacional (' + fcmAvg + '%) \u00b7 rojo = bajo promedio';
-    const fcmL = Object.keys(fcmReg);
-    const fcmV = Object.values(fcmReg);
+    const fcmSrt = sortDesc(Object.keys(fcmReg), Object.values(fcmReg));
+    const fcmL = fcmSrt.labels;
+    const fcmV = fcmSrt.cur;
     const fcmBG = fcmV.map(v => v >= fcmAvg ? 'rgba(0,180,160,.7)' : 'rgba(232,51,110,.6)');
     const fcmBC = fcmV.map(v => v >= fcmAvg ? C2 : CP);
     bar('c-fcm', fcmL, [{label:'FCM %', data:fcmV, backgroundColor:fcmBG, borderColor:fcmBC, borderWidth:1}],
@@ -1327,23 +1348,27 @@ function render(year, q) {
     bar('c-emp', empL, dsEmp, {fmt: v => '$'+v+'MM', ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL')+'MM';}, rot:40, xs:9});
   }
 
-  // Educación
-  const eduL = ['Ing.Op.','Transf.','Fin.Fiscal','Otros','Endeud.','Recup.','Vta.'];
+  // Educación — always sorted largest to smallest for the selected period
+  const eduLOrig = ['Ing.Op.','Transf.','Fin.Fiscal','Otros','Endeud.','Recup.','Vta.'];
   if (d.eduIng) {
+    const eduSrt = sortDesc(eduLOrig, d.eduIng, prd && prd.eduIng);
+    const eduL = eduSrt.labels, eduCur = eduSrt.cur, eduPrev = eduSrt.prev;
     const dsEdu = [];
-    var eduIngT = d.eduIng.reduce(function(a,b){return a+(b||0);},0);
-    dsEdu.push(ds(shortPer+'  $'+Math.round(eduIngT).toLocaleString('es-CL')+'MM', d.eduIng, 'rgba(0,180,160,.65)', C2));
-    if (prd && prd.eduIng) { var pEIT=prd.eduIng.reduce(function(a,b){return a+(b||0);},0); dsEdu.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+Math.round(pEIT).toLocaleString('es-CL')+'MM', prd.eduIng, 'rgba(46,95,163,.35)', C1)); }
+    var eduIngT = eduCur.reduce(function(a,b){return a+(b||0);},0);
+    dsEdu.push(ds(shortPer+'  $'+Math.round(eduIngT).toLocaleString('es-CL')+'MM', eduCur, 'rgba(0,180,160,.65)', C2));
+    if (eduPrev) { var pEIT=eduPrev.reduce(function(a,b){return a+(b||0);},0); dsEdu.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+Math.round(pEIT).toLocaleString('es-CL')+'MM', eduPrev, 'rgba(46,95,163,.35)', C1)); }
     bar('c-edu', eduL, dsEdu, {fmt: v => '$'+v+'MM', ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL')+'MM';}, rot:35});
   }
 
-  // Gastos IES chart
-  var gasIES_L = ['Personal','Bs. y Serv.','Transferencias','Inv. Real','Comp.Pend.','Serv.Deuda','Inv.Fin.'];
+  // Gastos IES chart — always sorted largest to smallest for the selected period
+  var gasIESLOrig = ['Personal','Bs. y Serv.','Transferencias','Inv. Real','Comp.Pend.','Serv.Deuda','Inv.Fin.'];
   if (d.eduGas) {
+    var eguSrt = sortDesc(gasIESLOrig, d.eduGas, prd && prd.eduGas);
+    var gasIES_L = eguSrt.labels, eguCur = eguSrt.cur, eguPrev = eguSrt.prev;
     var dsEdug = [];
-    var eduGasT = d.eduGas.reduce(function(a,b){return a+(b||0);},0);
-    dsEdug.push(ds(shortPer+'  $'+Math.round(eduGasT).toLocaleString('es-CL')+'MM', d.eduGas, 'rgba(0,180,160,.65)', C2));
-    if (prd && prd.eduGas) { var pEGT=prd.eduGas.reduce(function(a,b){return a+(b||0);},0); dsEdug.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+Math.round(pEGT).toLocaleString('es-CL')+'MM', prd.eduGas, 'rgba(46,95,163,.35)', C1)); }
+    var eduGasT = eguCur.reduce(function(a,b){return a+(b||0);},0);
+    dsEdug.push(ds(shortPer+'  $'+Math.round(eduGasT).toLocaleString('es-CL')+'MM', eguCur, 'rgba(0,180,160,.65)', C2));
+    if (eguPrev) { var pEGT=eguPrev.reduce(function(a,b){return a+(b||0);},0); dsEdug.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+Math.round(pEGT).toLocaleString('es-CL')+'MM', eguPrev, 'rgba(46,95,163,.35)', C1)); }
     bar('c-edug', gasIES_L, dsEdug, {fmt: v => '$'+v+'MM', ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL')+'MM';}, rot:35});
   }
 
@@ -1422,22 +1447,26 @@ function render(year, q) {
     CH.push(ci);
   }
 
-  // Gob Regionales
-  const gIngL = ['Transf.Capital','Transf.Corrientes','Otros'];
+  // Gob Regionales — always sorted largest to smallest for the selected period
+  const gIngLOrig = ['Transf.Capital','Transf.Corrientes','Otros'];
   if (d.gobIng) {
+    const giSrt = sortDesc(gIngLOrig, d.gobIng, prd && prd.gobIng);
+    const gIngL = giSrt.labels, giCur = giSrt.cur, giPrev = giSrt.prev;
     const dsGI = [];
-    var gobIngT = d.gobIng.reduce(function(a,b){return a+(b||0);},0);
-    dsGI.push(ds(shortPer+'  $'+(gobIngT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', d.gobIng, 'rgba(0,180,160,.65)', C2));
-    if (prd && prd.gobIng) { var pGIT=prd.gobIng.reduce(function(a,b){return a+(b||0);},0); dsGI.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pGIT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', prd.gobIng, 'rgba(46,95,163,.35)', C1)); }
+    var gobIngT = giCur.reduce(function(a,b){return a+(b||0);},0);
+    dsGI.push(ds(shortPer+'  $'+(gobIngT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', giCur, 'rgba(0,180,160,.65)', C2));
+    if (giPrev) { var pGIT=giPrev.reduce(function(a,b){return a+(b||0);},0); dsGI.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pGIT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', giPrev, 'rgba(46,95,163,.35)', C1)); }
     bar('c-ging', gIngL, dsGI, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM';}});
   }
 
-  const gGasL = ['Ini.Inversion','Transf.Cap.','Adq.Act.','Personal','Serv.Deuda','Transf.Corr.','Otros'];
+  const gGasLOrig = ['Ini.Inversion','Transf.Cap.','Adq.Act.','Personal','Serv.Deuda','Transf.Corr.','Otros'];
   if (d.gobGas) {
+    const ggSrt = sortDesc(gGasLOrig, d.gobGas, prd && prd.gobGas);
+    const gGasL = ggSrt.labels, ggCur = ggSrt.cur, ggPrev = ggSrt.prev;
     const dsGG = [];
-    var gobGasT = d.gobGas.reduce(function(a,b){return a+(b||0);},0);
-    dsGG.push(ds(shortPer+'  $'+(gobGasT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', d.gobGas, 'rgba(0,180,160,.65)', C2));
-    if (prd && prd.gobGas) { var pGGT=prd.gobGas.reduce(function(a,b){return a+(b||0);},0); dsGG.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pGGT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', prd.gobGas, 'rgba(46,95,163,.35)', C1)); }
+    var gobGasT = ggCur.reduce(function(a,b){return a+(b||0);},0);
+    dsGG.push(ds(shortPer+'  $'+(gobGasT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', ggCur, 'rgba(0,180,160,.65)', C2));
+    if (ggPrev) { var pGGT=ggPrev.reduce(function(a,b){return a+(b||0);},0); dsGG.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pGGT/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM', ggPrev, 'rgba(46,95,163,.35)', C1)); }
     bar('c-ggas', gGasL, dsGG, {fmt: v => '$'+(v/1000).toFixed(0)+'MM', ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+'MM';}, rot:40});
   }
 }
