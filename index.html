@@ -88,6 +88,7 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
 .ct{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:2px}
 .cs{font-size:11px;color:var(--muted);margin-bottom:.75rem}
 .cw{position:relative;width:100%;height:220px}
+.print-chart-snapshot{position:absolute;top:0;left:0;object-fit:contain}
 .cw canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
 
 /* KPI */
@@ -631,7 +632,24 @@ let _kpisOrigParent = null, _kpisOrigNext = null;
 
 function _onBeforePrint() {
   PRINTING = true;
-  CH.forEach(function(c){ try{ c.resize(); c.update('none'); c.draw(); }catch(e){} });
+  /* Force a synchronous redraw with labels, then snapshot each canvas as a static <img>.
+     Chrome has long-standing bugs rendering <canvas> in print output (blank/stale frames);
+     swapping to a PNG snapshot sidesteps that entirely. */
+  CH.forEach(function(c){
+    try{
+      c.resize(); c.update('none'); c.draw();
+      var canvas = c.canvas;
+      var img = document.createElement('img');
+      img.src = canvas.toDataURL('image/png');
+      img.className = 'print-chart-snapshot';
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.display = 'block';
+      canvas.style.display = 'none';
+      canvas.parentNode.insertBefore(img, canvas.nextSibling);
+      canvas._printImg = img;
+    }catch(e){}
+  });
   /* Move the KPI cards onto the cover page (page 1) so the first content page isn't wasted on them.
      Hooked here (not just the export button) so it also works with native browser Print/Ctrl+P. */
   var kpisEl = document.getElementById('kpis');
@@ -646,7 +664,14 @@ function _onBeforePrint() {
 }
 function _onAfterPrint() {
   PRINTING = false;
-  CH.forEach(function(c){ try{ c.update('none'); c.draw(); }catch(e){} });
+  CH.forEach(function(c){
+    try{
+      var canvas = c.canvas;
+      if (canvas._printImg) { canvas._printImg.remove(); canvas._printImg = null; }
+      canvas.style.display = '';
+      c.update('none');
+    }catch(e){}
+  });
   var kpisEl = document.getElementById('kpis');
   if (kpisEl && _kpisOrigParent) {
     if (_kpisOrigNext) _kpisOrigParent.insertBefore(kpisEl, _kpisOrigNext);
