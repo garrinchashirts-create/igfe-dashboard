@@ -660,28 +660,35 @@ window.addEventListener('afterprint',  _onAfterPrint);
 const valueLabelsPlugin = {
   id: 'valueLabels',
   afterDatasetsDraw: function(chart) {
-    const opts = chart.options.plugins && chart.options.plugins.valueLabels;
-    if (!opts || opts.enabled === false) return;
-    const fmt = opts.formatter || (v => v);
-    const ctx = chart.ctx;
-    ctx.save();
-    ctx.font = '700 9px Segoe UI,Arial,sans-serif';
-    ctx.textAlign = 'center';
-    chart.data.datasets.forEach(function(dset, dsi) {
-      const meta = chart.getDatasetMeta(dsi);
-      if (meta.hidden) return;
-      meta.data.forEach(function(el, i) {
-        const raw = dset.data[i];
-        if (raw === null || raw === undefined) return;
-        const pos = el.tooltipPosition ? el.tooltipPosition() : el;
-        const isLine = chart.config.type === 'line';
-        const up = raw >= 0;
-        const yOff = isLine ? -8 : (up ? -4 : 12);
-        ctx.fillStyle = isLine ? (dset.borderColor || '#333') : '#333';
-        ctx.fillText(fmt(raw), pos.x, pos.y + yOff);
-      });
-    });
-    ctx.restore();
+    try {
+      const opts = chart.options && chart.options.plugins && chart.options.plugins.valueLabels;
+      if (!opts || opts.enabled === false) return;
+      const fmt = opts.formatter || (v => v);
+      const ctx = chart.ctx;
+      ctx.save();
+      try {
+        ctx.font = '700 9px Segoe UI,Arial,sans-serif';
+        ctx.textAlign = 'center';
+        chart.data.datasets.forEach(function(dset, dsi) {
+          const meta = chart.getDatasetMeta(dsi);
+          if (!meta || meta.hidden) return;
+          (meta.data || []).forEach(function(el, i) {
+            if (!el) return;
+            const raw = dset.data[i];
+            if (raw === null || raw === undefined) return;
+            const pos = (typeof el.tooltipPosition === 'function') ? el.tooltipPosition() : el;
+            if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') return;
+            const isLine = chart.config.type === 'line';
+            const up = raw >= 0;
+            const yOff = isLine ? -8 : (up ? -4 : 12);
+            ctx.fillStyle = isLine ? (dset.borderColor || '#333') : '#333';
+            ctx.fillText(fmt(raw), pos.x, pos.y + yOff);
+          });
+        });
+      } finally {
+        ctx.restore();
+      }
+    } catch (e) { /* never let a label glitch break the chart render */ }
   }
 };
 Chart.register(valueLabelsPlugin);
