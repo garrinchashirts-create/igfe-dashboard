@@ -1084,7 +1084,7 @@ function render(year, q) {
     var prop=mi[0], minsal=mi[1], mineduc=mi[2], fcm=mi[3];
     var dTotal = ptotal ? pct(total,ptotal) : null;
     var totPct = function(v){ return total>0 ? (v/total*100).toFixed(1) : '--'; };
-    var t = 'Al '+curPer+', los ingresos del Sector Municipal alcanzaron $\u00a0'+(total/1000000).toLocaleString('es-CL',{maximumFractionDigits:1})+' mil millones'
+    var t = 'Al '+curPer+', los ingresos del Sector Municipal alcanzaron $\u00a0'+(total/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+' mil millones'
       +(pPer&&dTotal!=null?', un '+(parseFloat(dTotal)>=0?'aumento':'disminuci\u00f3n')+' del '+Math.abs(dTotal)+'% respecto al '+pPer:'')+'.'
       +' Los Ingresos Propios representaron el '+totPct(prop)+'% del total'
       +', las Transferencias MINSAL el '+totPct(minsal)+'%'
@@ -1101,7 +1101,7 @@ function render(year, q) {
     var pers=mg[0], transf=mg[1], bs=mg[2];
     var dTotal = ptotal ? pct(total,ptotal) : null;
     var totPct = function(v){ return total>0 ? (v/total*100).toFixed(1) : '--'; };
-    var t = 'Al '+curPer+', los gastos del Sector Municipal alcanzaron $\u00a0'+(total/1000000).toLocaleString('es-CL',{maximumFractionDigits:1})+' mil millones'
+    var t = 'Al '+curPer+', los gastos del Sector Municipal alcanzaron $\u00a0'+(total/1000).toLocaleString('es-CL',{maximumFractionDigits:0})+' mil millones'
       +(pPer&&dTotal!=null?', '+(parseFloat(dTotal)>=0?'un aumento':'una disminuci\u00f3n')+' del '+Math.abs(dTotal)+'% respecto al '+pPer:'')+'.'
       +' Los Gastos en Personal representaron el '+totPct(pers)+'% del total'
       +', Transferencias Corrientes el '+totPct(transf)+'%'
@@ -1255,9 +1255,9 @@ function render(year, q) {
     const miPrev = miSrt.prev;
     const dsMI = [];
     var mIngTotal = miCur.reduce(function(a,b){return a+(b||0);},0);
-    dsMI.push(ds(shortPer+'  $'+(mIngTotal/1000000).toLocaleString('es-CL',{maximumFractionDigits:1}), miCur, 'rgba(0,180,160,.65)', C2));
-    if (miPrev) { var pMIT=miPrev.reduce(function(a,b){return a+(b||0);},0); dsMI.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pMIT/1000000).toLocaleString('es-CL',{maximumFractionDigits:1}), miPrev, 'rgba(46,95,163,.35)', C1)); }
-    bar('c-ming', miL, dsMI, {fmt: v => '$'+(v/1000000).toLocaleString('es-CL',{maximumFractionDigits:1}), ytick: function(v){return '$ '+(v/1000000).toLocaleString('es-CL',{maximumFractionDigits:1});}, rot:40});
+    dsMI.push(ds(shortPer+'  $'+(mIngTotal/1000).toLocaleString('es-CL',{maximumFractionDigits:0}), miCur, 'rgba(0,180,160,.65)', C2));
+    if (miPrev) { var pMIT=miPrev.reduce(function(a,b){return a+(b||0);},0); dsMI.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pMIT/1000).toLocaleString('es-CL',{maximumFractionDigits:0}), miPrev, 'rgba(46,95,163,.35)', C1)); }
+    bar('c-ming', miL, dsMI, {fmt: v => '$'+Math.round(v/1000).toLocaleString('es-CL'), ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0});}, rot:40});
   }
 
   // Municipal Gastos — always sorted largest to smallest for the selected period
@@ -1267,9 +1267,9 @@ function render(year, q) {
     const mgL = mgSrt.labels, mgCur = mgSrt.cur, mgPrev = mgSrt.prev;
     const dsMG = [];
     var mGasTotal = mgCur.reduce(function(a,b){return a+(b||0);},0);
-    dsMG.push(ds(shortPer+'  $'+(mGasTotal/1000000).toLocaleString('es-CL',{maximumFractionDigits:1}), mgCur, 'rgba(0,180,160,.65)', C2));
-    if (mgPrev) { var pMGT=mgPrev.reduce(function(a,b){return a+(b||0);},0); dsMG.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pMGT/1000000).toLocaleString('es-CL',{maximumFractionDigits:1}), mgPrev, 'rgba(46,95,163,.35)', C1)); }
-    bar('c-mgas', mgL, dsMG, {fmt: v => '$'+(v/1000000).toLocaleString('es-CL',{maximumFractionDigits:1}), ytick: function(v){return '$ '+(v/1000000).toLocaleString('es-CL',{maximumFractionDigits:1});}, rot:40});
+    dsMG.push(ds(shortPer+'  $'+(mGasTotal/1000).toLocaleString('es-CL',{maximumFractionDigits:0}), mgCur, 'rgba(0,180,160,.65)', C2));
+    if (mgPrev) { var pMGT=mgPrev.reduce(function(a,b){return a+(b||0);},0); dsMG.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+(pMGT/1000).toLocaleString('es-CL',{maximumFractionDigits:0}), mgPrev, 'rgba(46,95,163,.35)', C1)); }
+    bar('c-mgas', mgL, dsMG, {fmt: v => '$'+Math.round(v/1000).toLocaleString('es-CL'), ytick: function(v){return '$ '+(v/1000).toLocaleString('es-CL',{maximumFractionDigits:0});}, rot:40});
   }
 
   // Municipal ranking
