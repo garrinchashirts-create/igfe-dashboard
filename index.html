@@ -189,7 +189,7 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
   .hdr-kpis,footer { display:none !important; }
 
   /* Page setup */
-  @page { size:A4 landscape; margin:12mm 14mm; }
+  @page { size:A4 portrait; margin:10mm 12mm; }
   body { background:white !important; font-size:9pt; color:#000; }
   * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 
@@ -205,7 +205,7 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
   }
   .cover-title-block{ display:block !important; margin-bottom:auto; }
   .cover-eyebrow{ font-size:13pt !important; font-weight:700 !important; letter-spacing:3px !important; color:var(--teal) !important; }
-  .cover-title-block h2{ font-size:30pt !important; font-weight:800 !important; line-height:1.15 !important; letter-spacing:-.5px !important; margin:6px 0 10px !important; color:#fff !important; }
+  .cover-title-block h2{ font-size:25pt !important; font-weight:800 !important; line-height:1.18 !important; letter-spacing:-.5px !important; margin:6px 0 10px !important; color:#fff !important; }
   .cover-year{ font-size:16pt !important; color:rgba(255,255,255,.7) !important; font-weight:600 !important; }
   .cover-in{ display:flex !important; align-items:flex-end; justify-content:space-between; gap:1rem; border-top:1px solid rgba(255,255,255,.2); padding-top:14px; }
   .cover-logo-img{ height:34px !important; width:auto !important; filter:brightness(0) invert(1); opacity:.9; }
@@ -231,11 +231,7 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
   main { padding:0 !important; }
   .sec { margin-bottom:10px !important; break-inside:avoid !important; page-break-inside:avoid !important; }
   /* Group sections onto pages the way the official PDF does, so charts don't split mid-section */
-  main > .sec:nth-of-type(3),  /* Sector Público · Ingresos y Gastos */
-  main > .sec:nth-of-type(4),  /* Deuda Pública e Inversiones Financieras */
-  main > .sec:nth-of-type(6),  /* Sector Municipal */
-  main > .sec:nth-of-type(7),  /* Ranking Municipal */
-  main > .sec:nth-of-type(8) { /* Empresas del Estado y Educación Superior */
+  main > .sec:nth-of-type(n+2) {
     page-break-before:always !important; break-before:page !important;
   }
   .sec-lbl { font-size:9pt !important; font-weight:700 !important;
@@ -255,7 +251,8 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
   /* Cards */
   .g2,.g3 { display:grid !important; gap:8px !important; }
   .g2 { grid-template-columns:1fr 1fr !important; }
-  .g3 { grid-template-columns:1fr 1fr 1fr !important; }
+  .g3 { grid-template-columns:1fr 1fr !important; }
+  #cob-grid { grid-template-columns:1fr 1fr 1fr !important; }
   .card { break-inside:avoid !important; border:1px solid #ccc !important;
           border-radius:4px !important; padding:8px !important;
           background:white !important; margin-bottom:0 !important; }
@@ -275,11 +272,11 @@ main{max-width:1300px;margin:0 auto;padding:1.25rem 1.5rem}
   .kpi-v { font-size:11pt !important; }
 
   /* Charts — resize for print */
-  .cw { height:145px !important; }
-  canvas { max-width:100% !important; max-height:145px !important; }
+  .cw { height:165px !important; }
+  canvas { max-width:100% !important; max-height:165px !important; }
 
   /* SVG circles */
-  #circles-svg svg { max-height:230px !important; }
+  #circles-svg svg { max-height:260px !important; max-width:100% !important; }
 
   /* Rankings */
   .rank-col { break-inside:avoid !important; }
