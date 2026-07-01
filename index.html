@@ -704,7 +704,7 @@ function mkChart(id, type, labels, datasets, opts) {
       maintainAspectRatio: false,
       layout: { padding: { top: 16 } },
       plugins: {
-        legend: { display: datasets.length > 1, labels: { boxWidth: 10, font: { size: 11 }, color: '#555' } },
+        legend: { display: datasets.length > 1, labels: { boxWidth: 10, font: { size: 12 }, color: '#555' } },
         tooltip: {
           callbacks: {
             title: function(items) {
@@ -719,13 +719,13 @@ function mkChart(id, type, labels, datasets, opts) {
           anchor: 'end',
           align: function(ctx){ var v = ctx.dataset.data[ctx.dataIndex]; return (v != null && v < 0) ? 'start' : 'end'; },
           offset: 2,
-          font: { size: 9, weight: '700' },
+          font: { size: 10, weight: '700' },
           color: '#333',
           formatter: v => (v === null || v === undefined) ? '' : (opts.fmt ? opts.fmt(v) : v)
         }
       },
       scales: {
-        x: { grid: { color: GC }, ticks: { color: '#555', maxRotation: opts.rot || 35, font: { size: opts.xs || 11 } } },
+        x: { grid: { color: GC }, ticks: { color: '#555', maxRotation: opts.rot || 35, font: { size: opts.xs || 12 } } },
         y: { grid: { color: GC }, ticks: { display: false } }
       }
     }
@@ -1339,7 +1339,7 @@ function render(year, q) {
     var mpBG = mpV.map(v => v >= 0 ? 'rgba(232,51,110,.7)' : 'rgba(46,95,163,.55)');
     var mpBC = mpV.map(v => v >= 0 ? CP : C1);
     bar('c-modpres', mpL, [{label:'Modificación %', data:mpV, backgroundColor:mpBG, borderColor:mpBC, borderWidth:1}],
-      {fmt: v => v.toFixed(1)+'%', ytick: v => v+'%', rot:45, xs:8});
+      {fmt: v => v.toFixed(1)+'%', ytick: v => v+'%', rot:45, xs:9});
   })();
 
   // FCM
@@ -1353,7 +1353,7 @@ function render(year, q) {
     const fcmBG = fcmV.map(v => v >= fcmAvg ? 'rgba(0,180,160,.7)' : 'rgba(232,51,110,.6)');
     const fcmBC = fcmV.map(v => v >= fcmAvg ? C2 : CP);
     bar('c-fcm', fcmL, [{label:'FCM %', data:fcmV, backgroundColor:fcmBG, borderColor:fcmBC, borderWidth:1}],
-      {fmt: v => v+'%', ytick: v => v+'%', rot:45, xs:9});
+      {fmt: v => v+'%', ytick: v => v+'%', rot:45, xs:10});
   }
 
   // Empresas
@@ -1371,7 +1371,7 @@ function render(year, q) {
     var empTotal = empCur.reduce(function(a,b){return a+(b||0);},0);
     dsEmp.push({label:shortPer+'  $'+Math.round(empTotal).toLocaleString('es-CL'), data:empCur, backgroundColor:empBG, borderColor:empBC, borderWidth:1})
     if (empPrev) { var pET=empPrev.reduce(function(a,b){return a+(b||0);},0); dsEmp.push(ds(qname(parseInt(prev.split('-')[1]))+' '+prev.split('-')[0]+'  $'+Math.round(Math.abs(pET)).toLocaleString('es-CL'), empPrev, 'rgba(46,95,163,.35)', C1)); };
-    bar('c-emp', empL, dsEmp, {fmt: v => '$'+Math.round(v).toLocaleString('es-CL'), ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL');}, rot:40, xs:9});
+    bar('c-emp', empL, dsEmp, {fmt: v => '$'+Math.round(v).toLocaleString('es-CL'), ytick: function(v){return '$ '+Math.round(v).toLocaleString('es-CL');}, rot:40, xs:10});
   }
 
   // Educación — always sorted largest to smallest for the selected period
@@ -1409,16 +1409,16 @@ function render(year, q) {
       type: 'bar',
       data: { labels: gL, datasets: [
         {label:'Transferencias (B$)', data:gT, backgroundColor:'rgba(46,95,163,.5)', borderColor:C1, borderWidth:1, yAxisID:'y',
-          datalabels:{display:true, anchor:'end', align:'end', offset:2, font:{size:8,weight:'700'}, color:'#333', formatter:v=>'$'+v+'B'}},
+          datalabels:{display:true, anchor:'end', align:'end', offset:2, font:{size:9,weight:'700'}, color:'#333', formatter:v=>'$'+v+'B'}},
         {type:'line', label:'% Gratuidad', data:gP, borderColor:CG, backgroundColor:'rgba(240,165,0,.1)', borderWidth:2, pointRadius:4, pointBackgroundColor:CG, fill:false, yAxisID:'y2', tension:.3,
           datalabels:{display:false}}
       ]},
       options: {
         responsive:true, maintainAspectRatio:false,
         layout:{padding:{top:16}},
-        plugins:{legend:{display:true,labels:{boxWidth:9,font:{size:10}}},tooltip:{mode:'index',intersect:false}},
+        plugins:{legend:{display:true,labels:{boxWidth:10,font:{size:11}}},tooltip:{mode:'index',intersect:false}},
         scales:{
-          x:{grid:{color:GC},ticks:{color:'#555',font:{size:9}}},
+          x:{grid:{color:GC},ticks:{color:'#555',font:{size:10}}},
           y:{grid:{color:GC},ticks:{color:'#555',callback:v=>'$'+v+'B'},position:'left'},
           y2:{grid:{display:false},ticks:{color:CG,callback:v=>v+'%'},position:'right'}
         }
@@ -1469,8 +1469,8 @@ function render(year, q) {
       }]},
       options:{
         responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:true,labels:{boxWidth:9,font:{size:10}}},tooltip:{callbacks:{label:ctx=>' '+ctx.parsed.y+'%'}},datalabels:{display:false}},
-        scales:{x:{grid:{color:GC},ticks:{color:'#555',font:{size:9}}},y:{grid:{color:GC},ticks:{color:'#555',callback:v=>v+'%'},min:8,max:16}}
+        plugins:{legend:{display:true,labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>' '+ctx.parsed.y+'%'}},datalabels:{display:false}},
+        scales:{x:{grid:{color:GC},ticks:{color:'#555',font:{size:10}}},y:{grid:{color:GC},ticks:{color:'#555',callback:v=>v+'%'},min:8,max:16}}
       }
     });
     CH.push(ci);
@@ -1654,7 +1654,7 @@ function buildHistoric(dbKey, unit, mode) {
         }
       },
       scales: {
-        x: { grid:{color:'#f0f2f5'}, ticks:{font:{size:10}, maxRotation:0,
+        x: { grid:{color:'#f0f2f5'}, ticks:{font:{size:11}, maxRotation:0,
           color: function(ctx) {
             // Grey out periods with no data
             var p = periods[ctx.index];
@@ -1662,7 +1662,7 @@ function buildHistoric(dbKey, unit, mode) {
           }
         }},
         y: { grid:{color:'#f0f2f5'},
-             ticks:{font:{size:10}, callback:function(v){
+             ticks:{font:{size:11}, callback:function(v){
                return v.toLocaleString('es-CL',{maximumFractionDigits:1})+'\u00a0'+unit;
              }}
         }
